@@ -5,15 +5,16 @@
             [ring.adapter.jetty :refer [run-jetty]]
             [compojure.core :refer [defroutes ANY]]))
 
-
+(def username "facebook1428467850")
+(def password "3a34gc72")
 (defroutes app
   (ANY "/" [] (resource :available-media-types ["application/json"]
                         :handle-ok  {:success true}))
   (ANY "/tokens" [] (resource :available-media-types ["application/json"]
-                              :handle-ok (fn [ctx]  {:success true :token-id (get-in (tokens) [:access :token :id])})))
+                              :handle-ok (fn [ctx]  {:success true :token-id (get-in (tokens username password) [:access :token :id])})))
   (ANY  "/endpoints/:tenant" [tenant]  (resource :allowed-methods [:post :get]
                                           :available-media-types ["application/json"]
-                                          :handle-ok (fn [_]  {:success true :endpoints (structured-endpoints (endpoints tenant))}))))
+                                          :handle-ok (fn [_]  {:success true :endpoints (structured-endpoints (endpoints username password tenant))}))))
 
 
 
