@@ -31,6 +31,8 @@
                                          :source-paths ["src/cljs"]
                                          :compiler {
                                                     :output-to "target/classes/public/app.js"
+
+
                                                     :optimizations :advanced
                                                     :pretty-print false
                                                     :preamble ["react/react.min.js"]
