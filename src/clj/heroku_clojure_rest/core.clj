@@ -31,7 +31,7 @@
             (enlive/html [:script (browser-connected-repl-js)])))
 (defroutes app
   (resources "/")
-  (resources "/out")
+
 
   (ANY "/" req (page))
   (ANY "/tokens" [] (resource :available-media-types ["application/json"]
