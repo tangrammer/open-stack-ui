@@ -7,7 +7,9 @@
 
   :dependencies [[org.clojure/clojure "1.5.1"]
                  [org.clojure/clojurescript "0.0-2138"]
+                 [org.clojure/core.async "0.1.267.0-0d7780-alpha"]
                  [om "0.3.0"]
+                 [com.facebook/react "0.8.0.1"]
                  [com.enterpriseweb/open-stack-wrapper "0.1.0"]
                  [liberator "0.10.0"]
                  [compojure "1.1.3"]
