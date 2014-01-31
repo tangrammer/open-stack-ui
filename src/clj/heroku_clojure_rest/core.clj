@@ -25,13 +25,16 @@
          )
 
 (enlive/deftemplate page
-  (io/resource "production.html"; "development.html"
-               )
+  (io/resource
+   ;"production.html"
+   "development.html"
+   )
   []
   [:body] (enlive/append
             (enlive/html [:script (browser-connected-repl-js)])))
 (defroutes app
   (resources "/")
+  (resources "/out")
 
 
   (ANY "/" req (page))
@@ -47,12 +50,12 @@
   (-> app
       (wrap-params)))
 (comment
- (run-jetty #'handler {:port 3000}))
+ (run-jetty #'handler {:port 5000}))
 
 (defn -main [port]
    (run-jetty #'handler {:port (Integer. port) :join? false})
 )
 
 (defn run []
-  (-main 3000)
+  (-main 5000)
   )

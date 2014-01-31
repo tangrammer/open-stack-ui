@@ -13,13 +13,10 @@
                  [compojure "1.1.3"]
 		 [ring/ring-core "1.2.1"]
                  [ring/ring-jetty-adapter "1.1.0"]
-                 [enlive "1.1.5"]
-
-                 ]
+                 [enlive "1.1.5"]]
   :plugins [[com.cemerick/austin "0.1.3"]
-                             [lein-cljsbuild "1.0.1"]]
+            [lein-cljsbuild "1.0.1"]]
   :profiles {:dev {:repl-options {:init-ns heroku-clojure-rest.core :nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]}
-
                    :cljsbuild {:builds [{:id "dev"
                                          :source-paths ["src/cljs"]
                                          :compiler {
@@ -31,13 +28,9 @@
                                          :source-paths ["src/cljs"]
                                          :compiler {
                                                     :output-to "resources/public/app.js"
-
-
                                                     :optimizations :advanced
                                                     :pretty-print false
                                                     :preamble ["react/react.min.js"]
                                                     :externs ["react/externs/react.js"]}}]}}}
   :uberjar-name "heroku-clojure-rest-standalone.jar"
-  :min-lein-version "2.0.0"
-
-  )
+  :min-lein-version "2.0.0")

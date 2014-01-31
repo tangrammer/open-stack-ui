@@ -1,7 +1,17 @@
 (ns heroku.index
-  (:require [om.core :as om :include-macros true]
-            [om.dom :as dom :include-macros true]
-            [clojure.browser.repl]))
+  (:require
+       [goog.net.XhrIo :as xhr]
+       [om.core :as om :include-macros true]
+       [om.dom :as dom :include-macros true]
+       [clojure.browser.repl]))
+
+
+(defn GET [url]
+  (xhr/send url
+            (fn [event]
+              (let [res (-> event .-target .getResponseText)]
+                (js/alert res)
+                ))))
 
 (defn widget [data owner]
   (reify
