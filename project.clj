@@ -30,7 +30,7 @@
                                         {:id "release"
                                          :source-paths ["src/cljs"]
                                          :compiler {
-                                                    :output-to "resources/app.js"
+                                                    :output-to "resources/public/app.js"
 
 
                                                     :optimizations :advanced
