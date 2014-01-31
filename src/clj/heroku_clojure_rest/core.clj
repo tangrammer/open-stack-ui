@@ -25,7 +25,8 @@
          )
 
 (enlive/deftemplate page
-  (io/resource "index.html")
+  (io/resource "production.html"; "development.html"
+               )
   []
   [:body] (enlive/append
             (enlive/html [:script (browser-connected-repl-js)])))
