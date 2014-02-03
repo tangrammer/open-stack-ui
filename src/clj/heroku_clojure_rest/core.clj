@@ -44,7 +44,7 @@
                                           :available-media-types ["application/json"]
                                           :handle-ok (fn [_]  {:success true :endpoints (structured-endpoints (endpoints username password tenant))}))))
 
-
+(declare server)
 
 (def handler
   (-> app
@@ -53,9 +53,13 @@
  (run-jetty #'handler {:port 5000}))
 
 (defn -main [port]
-   (run-jetty #'handler {:port (Integer. port) :join? false})
+   (def server (run-jetty #'handler {:port (Integer. port) :join? false :auto-reload? true :reload-paths "/resources"}))
 )
 
 (defn run []
   (-main 5000)
+  )
+
+(defn stop []
+  (.stop server)
   )
