@@ -20,12 +20,13 @@
 
 (enlive/deftemplate page
   (io/resource
-   "production.html"
-   ;"development.html"
+;   "production.html"
+   "development.html"
    )
   []
   [:body] (enlive/append
-            (enlive/html [:h1 "production"];[:script (browser-connected-repl-js)]
+           (enlive/html ;[:h1 "production"]
+                         [:script (browser-connected-repl-js)]
              )))
 
 (def posts (ref []))
@@ -39,14 +40,6 @@
 
 (defroutes app1
 
-  #_(comment
-           (ANY "/tokens" [] (resource :available-media-types ["application/json"]
-                                       :handle-ok (fn [ctx]
-                                                    (tokens url username password))))
-           (ANY  "/endpoints/:tenant" [tenant]  (resource :allowed-methods [:post :get]
-                                                          :available-media-types ["application/json"]
-                                                          :handle-ok (fn [_]  (endpoints url username password tenant)))))
-
   (ANY "/connect" [url username password]
        (println url username password)
        (resp/response (tokens url username password)))
@@ -59,8 +52,10 @@
 
     (ANY "/service-call" [token-id publicURL path]
 
-           (println token-id publicURL path)
-       (resp/response (service-call token-id publicURL path)))
+         (println token-id publicURL path)
+         (let [r (service-call token-id publicURL (reduce str "" (rest path)))]
+           (println r)
+           (resp/response r)))
 
 )
 

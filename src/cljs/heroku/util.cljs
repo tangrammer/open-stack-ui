@@ -1,8 +1,13 @@
 (ns heroku.util)
 
 
-(def available-calls {:nova ["/images" "/flavors" "/servers"]
-                      :quantum ["/networks" "/subnets"]})
+(def available-calls {:nova [{:url "/images" :id :images}
+                             {:url "/flavors" :id :flavors}
+                             {:url "/servers" :id :servers}
+]
+                      :quantum [{:url "/networks" :id :networks}
+                                {:url "/subnets" :id :subnets}
+]})
 
 (defn structured-endpoints [data]
   "in this development state we take the first endpoint available on each service"

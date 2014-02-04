@@ -17,7 +17,7 @@
 (def url "http://8.21.28.222:5000")
 
 
-(declare get-tenants show-endpoints endpoints-view)
+(declare get-tenants show-endpoints endpoints-view show-service-call)
 
 (defn widget [data owner]
   (reify
@@ -52,31 +52,50 @@
      (recur))
    )
  )
+
+(def service-call-channel (chan))
+
+(go
+ (loop []
+   (let [readed (<! service-call-channel)]
+     (show-service-call readed)
+     (recur))
+   )
+ )
+
+
 (defn show-endpoints [eps-and-token-id]
 
   (om/root (swap! app-state merge eps-and-token-id) endpoints-view (. js/document (getElementById "my-app")))
   )
+
+
+(defn show-service-call [model]
+  (swap! app-state assoc :model model)
+
+  )
+
+
 
 (defn rerender-eps []
   (om/root app-state endpoints-view (. js/document (getElementById "my-app")))
   )
 
 
-(defn try-to-call [token-id publicURL path]
-  (println token-id publicURL path)
+(defn try-to-call [token-id publicURL av]
+  (println token-id publicURL av)
 
 (GET
        "/service-call"
-       {:params {:token-id token-id :publicURL publicURL :path path}
+       {:params {:token-id token-id :publicURL publicURL :path (:url av)}
         :handler (fn [response]
                    (if (:success response)
                      (do
-                       (swap! app-state assoc :flavors (:flavors response))
-                                            (js/alert (:flavors response))
-;                       (put! connect-channel  (get-in response [:access :token :id]))
+                       (swap! app-state assoc (:id av) ((:id av) response))
+                       (put! service-call-channel  ((:id av) response))
                        )
                      (js/alert response)))
-        :error-handler error-handler
+        :error-handler util/error-handler
         :response-format :json
         :keywords? true})
 
@@ -89,8 +108,13 @@
       (println tenant)
       (dom/li #js {:className "list-group-item" } (:name tenant)
               (doall (map
-                 (fn [av] (dom/button #js {:onClick #(try-to-call (:token-id @app-state) (:publicURL @tenant) av) :className "btn btn-primary btn-xs"} av) ) (:available-calls tenant)
-                 ))
+                      (fn [av]
+                        (dom/button #js {:onClick
+                                         #(try-to-call (:token-id @app-state)
+                                                       (:publicURL @tenant)
+                                                       av) :className "btn btn-primary btn-xs"} (:url av)) )
+                      (:available-calls @tenant))
+                     )
               ))))
 
 (defn endpoints-view [app owner]
@@ -118,7 +142,7 @@
                        (swap! app-state assoc :url url)
                        (put! connect-channel  (get-in response [:access :token :id])))
                      (js/alert response)))
-        :error-handler error-handler
+        :error-handler util/error-handler
         :response-format :json
         :keywords? true})
       (GET
@@ -129,7 +153,7 @@
                      (put! endpoints-channel {:token-id (get-in response [:access :token :id]) :endpoints (util/structured-endpoints response)})
 
                      (js/alert response)))
-        :error-handler error-handler
+        :error-handler util/error-handler
         :response-format :json
         :keywords? true})
       )
@@ -163,13 +187,12 @@
    {
     :params {:url (:url @app-state) :token-id token-id}
     :handler (fn [response]
-
                (if (:success response)
                  (render-tenants (swap! app-state assoc :tenants (:tenants response)))
                  (js/alert "errorr")
                  )
                )
-    :error-handler error-handler
+    :error-handler util/error-handler
     :response-format :json
     :keywords? true}))
 
@@ -189,7 +212,7 @@
                  (swap! app-state assoc :endpoints (:endpoints response)) ;TODO                (js/alert "no tenants!\n" response)
                  )
                )
-    :error-handler error-handler
+    :error-handler util/error-handler
     :response-format :json
     :keywords? true}))
 
