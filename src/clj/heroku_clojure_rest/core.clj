@@ -20,12 +20,13 @@
 
 (enlive/deftemplate page
   (io/resource
-   ;"production.html"
-   "development.html"
+   "production.html"
+   ;"development.html"
    )
   []
   [:body] (enlive/append
-            (enlive/html [:script (browser-connected-repl-js)])))
+            (enlive/html [:h1 "production"];[:script (browser-connected-repl-js)]
+             )))
 
 (def posts (ref []))
 

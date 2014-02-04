@@ -12,7 +12,7 @@
                  [simple-xhr "0.1.3"]
                  [cljs-ajax "0.2.3"]
                  [com.facebook/react "0.8.0.1"]
-                 [com.enterpriseweb/open-stack-wrapper "0.1.0"]
+                 [com.enterpriseweb/open-stack-wrapper "0.1.1"]
                  [compojure "1.1.3"]
 		 [ring/ring-core "1.2.1"]
                  [ring/ring-json "0.2.0"]
