@@ -16,16 +16,7 @@
 (def password "3a34gc72")
 (def url "http://8.21.28.222:5000")
 
-(comment  "to start:
- * cljsbuild once to generate the js
- * brepl evaluate both lines and reload browser
- * on the brepl enter this line (js/alert 'here')"
 
-          (def repl-env (reset! cemerick.austin.repls/browser-repl-env
-                               (cemerick.austin/repl-env)))
-          (cemerick.austin.repls/cljs-repl repl-env)
-
-         )
 
 (enlive/deftemplate page
   (io/resource
@@ -42,32 +33,34 @@
 (defroutes app
   (resources "/")
   (resources "/out")
-
   (GET "/dev" [] (page))
-
-  (ANY "/" req (page))
-
-
- )
+  (ANY "/" req (page)))
 
 (defroutes app1
 
   #_(comment
            (ANY "/tokens" [] (resource :available-media-types ["application/json"]
-                                       :handle-ok (fn [ctx]  {:success true :token-id (get-in (tokens url username password) [:access :token :id])})))
+                                       :handle-ok (fn [ctx]
+                                                    (tokens url username password))))
            (ANY  "/endpoints/:tenant" [tenant]  (resource :allowed-methods [:post :get]
                                                           :available-media-types ["application/json"]
-                                                          :handle-ok (fn [_]  {:success true :endpoints (structured-endpoints (endpoints url username password tenant))}))))
+                                                          :handle-ok (fn [_]  (endpoints url username password tenant)))))
 
   (ANY "/connect" [url username password]
        (println url username password)
-       (resp/response {:success true :token-id (get-in (tokens url username password) [:access :token :id])}))
+       (resp/response (tokens url username password)))
   (ANY "/tenants" [url token-id]
        (println url token-id)
        (resp/response (tenants url token-id)))
     (ANY "/endpoints" [url username password tenantname]
        (println url username password tenantname)
-       (resp/response {:success true :endpoints (structured-endpoints (endpoints url username password tenantname))}))
+       (resp/response (endpoints url username password tenantname)))
+
+    (ANY "/service-call" [token-id publicURL path]
+
+           (println token-id publicURL path)
+       (resp/response (service-call token-id publicURL path)))
+
 )
 
 (def admin-routes
@@ -96,3 +89,14 @@
 (defn stop []
   (.stop server)
   )
+
+(comment  "to start:
+ * cljsbuild once to generate the js
+ * brepl evaluate both lines and reload browser
+ * on the brepl enter this line (js/alert 'here')"
+
+          (def repl-env (reset! cemerick.austin.repls/browser-repl-env
+                               (cemerick.austin/repl-env)))
+          (cemerick.austin.repls/cljs-repl repl-env)
+
+         )

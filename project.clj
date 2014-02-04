@@ -20,7 +20,7 @@
                  [enlive "1.1.5"]]
   :plugins [[com.cemerick/austin "0.1.3"]
             [lein-cljsbuild "1.0.1"]]
-  :profiles {:dev {:repl-options {:init-ns heroku-clojure-rest.core :nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]}
+  :profiles {:dev {:repl-options { :nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]}
                    :cljsbuild {:builds [{:id "dev"
                                          :source-paths ["src/cljs"]
                                          :compiler {
