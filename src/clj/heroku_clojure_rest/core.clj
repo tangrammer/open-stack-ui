@@ -18,16 +18,16 @@
 
 
 
-(enlive/deftemplate page
-  (io/resource
-;   "production.html"
-   "development.html"
-   )
+(enlive/deftemplate page-dev
+  (io/resource "development.html")
   []
   [:body] (enlive/append
-           (enlive/html ;[:h1 "production"]
-                         [:script (browser-connected-repl-js)]
-             )))
+           (enlive/html [:script (browser-connected-repl-js)])))
+(enlive/deftemplate page-prod
+  (io/resource "production.html")
+  []
+  [:body] (enlive/append
+           (enlive/html [:h1 "production"])))
 
 (def posts (ref []))
 
@@ -35,8 +35,9 @@
 (defroutes app
   (resources "/")
   (resources "/out")
-  (GET "/dev" [] (page))
-  (ANY "/" req (page)))
+  (GET "/dev" [] (page-dev))
+  (GET "/prod" [] (page-prod))
+  (ANY "/" req (page-prod)))
 
 (defroutes app1
 
@@ -49,9 +50,7 @@
     (ANY "/endpoints" [url username password tenantname]
        (println url username password tenantname)
        (resp/response (endpoints url username password tenantname)))
-
     (ANY "/service-call" [token-id publicURL path]
-
          (println token-id publicURL path)
          (let [r (service-call token-id publicURL (reduce str "" (rest path)))]
            (println r)
