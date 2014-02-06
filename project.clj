@@ -38,3 +38,4 @@
                                                     :externs ["react/externs/react.js"]}}]}}}
   :uberjar-name "heroku-clojure-rest-standalone.jar"
   :min-lein-version "2.0.0")
+;ulimit -c unlimited

@@ -1,0 +1,1034 @@
+#
+# A fatal error has been detected by the Java Runtime Environment:
+#
+#  SIGSEGV (0xb) at pc=0x000000010d39eae8, pid=1088, tid=2059
+#
+# JRE version: Java(TM) SE Runtime Environment (7.0_51-b13) (build 1.7.0_51-b13)
+# Java VM: Java HotSpot(TM) 64-Bit Server VM (24.51-b03 mixed mode bsd-amd64 compressed oops)
+# Problematic frame:
+# V  [libjvm.dylib+0x39eae8]  LinkResolver::resolve_invokeinterface(CallInfo&, Handle, constantPoolHandle, int, Thread*)+0x84
+#
+# Failed to write core dump. Core dumps have been disabled. To enable core dumping, try "ulimit -c unlimited" before starting Java again
+#
+# If you would like to submit a bug report, please visit:
+#   http://bugreport.sun.com/bugreport/crash.jsp
+#
+
+---------------  T H R E A D  ---------------
+
+Current thread (0x00007ffcc4041800):  JavaThread "main" [_thread_in_vm, id=2059, stack(0x000000010da54000,0x000000010db54000)]
+
+siginfo:si_signo=SIGSEGV: si_errno=0, si_code=1 (SEGV_MAPERR), si_addr=0x0000000000069008
+
+Registers:
+RAX=0x0000000000069000, RBX=0x00007ffcc4041800, RCX=0x000000010db4f803, RDX=0x000000010d7705c0
+RSP=0x000000010db4f850, RBP=0x000000010db4f8b0, RSI=0x0000000000000008, RDI=0x000000010cf1c900
+R8 =0x000000010db4f0b0, R9 =0x000000077b594cd0, R10=0x000000010d81a0f0, R11=0x000000010de99b40
+R12=0x0000000000000000, R13=0x000000077b5982dd, R14=0x000000010cf1cfb0, R15=0x000000010db4f910
+RIP=0x000000010d39eae8, EFLAGS=0x0000000000010202, ERR=0x0000000000000004
+  TRAPNO=0x000000000000000e
+
+Top of Stack: (sp=0x000000010db4f850)
+0x000000010db4f850:   00007ffcc4041800 000000010db4fab0
+0x000000010db4f860:   000000010db4fa58 000000010db4fa58
+0x000000010db4f870:   000000010cf1cfe8 0000000118f33420
+0x000000010db4f880:   0000000118f33400 000000010cf1cfe0
+0x000000010db4f890:   00007ffcc4041800 0000000000000000
+0x000000010db4f8a0:   000000010cf1cfb0 000000010cf1cfb8
+0x000000010db4f8b0:   000000010db4fa40 000000010d2d1d42
+0x000000010db4f8c0:   000000000000002d 000000b90000000c
+0x000000010db4f8d0:   000000077b5982dd 00000001000000b9
+0x000000010db4f8e0:   000000010cf1cfa8 000000010cf1c7d0
+0x000000010db4f8f0:   000000010cf1cba0 000000010cf1cbb0
+0x000000010db4f900:   000000010cf1cf88 00000000000003d8
+0x000000010db4f910:   0000000000000000 0000000000000000
+0x000000010db4f920:   0000000000000000 0000000000000000
+0x000000010db4f930:   000000010db4fac0 0000000000000000
+0x000000010db4f940:   0000000000000000 00007ffcc4041800
+0x000000010db4f950:   00007ffcc4041800 000000010db4fa58
+0x000000010db4f960:   000000010dbb4763 000000010db9c310
+0x000000010db4f970:   0000000100000000 000000010db4fab0
+0x000000010db4f980:   000000010db4fa58 000000010db4fa58
+0x000000010db4f990:   000000010dbb4763 000000010db9c310
+0x000000010db4f9a0:   0000000100000000 000000010db4fab0
+0x000000010db4f9b0:   000000010db4fa58 000000010db4fa58
+0x000000010db4f9c0:   000000010dbb4763 000000010db9c310
+0x000000010db4f9d0:   00007ffc00000000 000000010db4fab0
+0x000000010db4f9e0:   000000010db4fa58 000000010db4fa58
+0x000000010db4f9f0:   000000010dbb4763 000000010db9c310
+0x000000010db4fa00:   0000000100000000 000000010db4fab0
+0x000000010db4fa10:   000000010db4fa58 00000000000000b9
+0x000000010db4fa20:   0000000000000000 000000077b5982dd
+0x000000010db4fa30:   000000010db4fae8 00007ffcc4041800
+0x000000010db4fa40:   000000010db4fab0 000000010dbb47a8 
+
+Instructions: (pc=0x000000010d39eae8)
+0x000000010d39eac8:   f6 75 04 31 c0 eb 44 48 8d 05 ba 41 46 00 80 38
+0x000000010d39ead8:   00 49 8b 06 74 16 48 8d 15 db 1a 3d 00 8a 4a 08
+0x000000010d39eae8:   44 8b 60 08 49 d3 e4 4c 03 22 eb 04 4c 8b 60 08
+0x000000010d39eaf8:   4d 85 e4 74 ce 48 8b bb 20 01 00 00 be 08 00 00 
+
+Register to memory mapping:
+
+RAX=0x0000000000069000 is an unknown value
+RBX=0x00007ffcc4041800 is a thread
+RCX=0x000000010db4f803 is pointing into the stack for thread: 0x00007ffcc4041800
+RDX=0x000000010d7705c0: _ZN8Universe11_narrow_oopE+0 in /Library/Java/JavaVirtualMachines/jdk1.7.0_51.jdk/Contents/Home/jre/lib/server/libjvm.dylib at 0x000000010d000000
+RSP=0x000000010db4f850 is pointing into the stack for thread: 0x00007ffcc4041800
+RBP=0x000000010db4f8b0 is pointing into the stack for thread: 0x00007ffcc4041800
+RSI=0x0000000000000008 is an unknown value
+RDI=0x000000010cf1c900 is an unknown value
+R8 =0x000000010db4f0b0 is pointing into the stack for thread: 0x00007ffcc4041800
+R9 =0x000000077b594cd0 is an oop
+{constant pool} 
+ - klass: {other class}
+ - holder: 0x000000077b59c4c8
+ - cache: 0x000000077b59ca50
+ -   1 :  : klass_index=47 name_and_type_index=329
+ -   2 :  : klass_index=47 name_and_type_index=330
+ -   3 :  : klass_index=47 name_and_type_index=331
+ -   4 :  : klass_index=47 name_and_type_index=332
+ -   5 :  : klass_index=110 name_and_type_index=333
+ -   6 :  : klass_index=47 name_and_type_index=334
+ -   7 :  : klass_index=47 name_and_type_index=335
+ -   8 :  : klass_index=47 name_and_type_index=336
+ -   9 :  : klass_index=47 name_and_type_index=337
+ -  10 :  : klass_index=47 name_and_type_index=338
+ -  11 :  : klass_index=47 name_and_type_index=339
+ -  12 :  : klass_index=27 name_and_type_index=340
+ -  13 :  : klass_index=27 name_and_type_index=341
+ -  14 :  : klass_index=27 name_and_type_index=342
+ -  15 :  : klass_index=343 name_and_type_index=344
+ -  16 :  : klass_index=47 name_and_type_index=345
+ -  17 :  : 'java/io/IOException'
+ -  18 :  : 'java/lang/ClassNotFoundException'
+ -  19 :  : klass_index=47 name_and_type_index=348
+ -  20 :  : klass_index=47 name_and_type_index=349
+ -  21 :  : klass_index=42 name_and_type_index=350
+ -  22 :  : klass_index=47 name_and_type_index=351
+ -  23 :  : klass_index=47 name_and_type_index=352
+ -  24 :  : klass_index=47 name_and_type_index=353
+ -  25 :  : klass_index=47 name_and_type_index=354
+ -  26 :  : klass_index=355 name_and_type_index=341
+ -  27 :  : 'java/util/SortedMap'
+ -  28 :  : klass_index=357 name_and_type_index=358
+ -  29 :  : klass_index=355 name_and_type_index=342
+ -  30 :  : klass_index=110 name_and_type_index=339
+ -  31 :  : klass_index=47 name_and_type_index=359
+ -  32 :  : 'java/lang/NullPointerException'
+ -  33 :  : klass_index=32 name_and_type_index=333
+ -  34 :  : 'java/lang/Comparable' {0x77ae04538}
+ -  35 :  : klass_index=42 name_and_type_index=362
+ -  36 :  : klass_index=34 name_and_type_index=363
+ -  37 :  : klass_index=42 name_and_type_index=364
+ -  38 :  : klass_index=42 name_and_type_index=365
+ -  39 :  : klass_index=357 name_and_type_index=366
+ -  40 :  : klass_index=47 name_and_type_index=366
+ -  41 :  : klass_index=42 name_and_type_index=367
+ -  42 :  : 'java/util/TreeMap$Entry' {0x77b59fdd0}
+ -  43 :  : klass_index=42 name_and_type_index=369
+ -  44 :  : klass_index=42 name_and_type_index=370
+ -  45 :  : klass_index=47 name_and_type_index=371
+ -  46 :  : klass_index=110 name_and_type_index=372
+ -  47 :  : 'java/util/TreeMap' {0x77b59c4c8}
+ -  48 :  : 'java/lang/CloneNotSupportedException'
+ -  49 :  : 'java/lang/InternalError'
+ -  50 :  : klass_index=49 name_and_type_index=333
+ -  51 :  : klass_index=47 name_and_type_index=342
+ -  52 :  : klass_index=47 name_and_type_index=376
+ -  53 :  : klass_index=47 name_and_type_index=377
+ -  54 :  : klass_index=47 name_and_type_index=378
+ -  55 :  : klass_index=47 name_and_type_index=379
+ -  56 :  : klass_index=47 name_and_type_index=380
+ -  57 :  : klass_index=47 name_and_type_index=381
+ -  58 :  : klass_index=47 name_and_type_index=382
+ -  59 :  : 'java/util/TreeMap$KeySet' {0x77b81b668}
+ -  60 :  : klass_index=59 name_and_type_index=384
+ -  61 :  : klass_index=47 name_and_type_index=385
+ -  62 :  : klass_index=111 name_and_type_index=382
+ -  63 :  : klass_index=47 name_and_type_index=386
+ -  64 :  : 'java/util/TreeMap$Values'
+ -  65 :  : klass_index=64 name_and_type_index=388
+ -  66 :  : 'java/util/TreeMap$EntrySet' {0x77b5a15d0}
+ -  67 :  : klass_index=66 name_and_type_index=388
+ -  68 :  : 'java/util/TreeMap$DescendingSubMap'
+ -  69 :  : klass_index=68 name_and_type_index=391
+ -  70 :  : 'java/util/TreeMap$AscendingSubMap'
+ -  71 :  : klass_index=70 name_and_type_index=391
+ -  72 :  : klass_index=47 name_and_type_index=393
+ -  73 :  : klass_index=47 name_and_type_index=394
+ -  74 :  : klass_index=47 name_and_type_index=395
+ -  75 :  : 'java/util/TreeMap$KeyIterator' {0x77b81c2d0}
+ -  76 :  : klass_index=75 name_and_type_index=397
+ -  77 :  : 'java/util/TreeMap$DescendingKeyIterator'
+ -  78 :  : klass_index=77 name_and_type_index=397
+ -  79 :  : klass_index=108 name_and_type_index=358
+ -  80 :  : 'java/util/AbstractMap$SimpleImmutableEntry'
+ -  81 :  : klass_index=80 name_and_type_index=401
+ -  82 :  : 'java/util/NoSuchElementException'
+ -  83 :  : klass_index=82 name_and_type_index=333
+ -  84 :  : klass_index=42 name_and_type_index=403
+ -  85 :  : klass_index=47 name_and_type_index=404
+ -  86 :  : klass_index=47 name_and_type_index=405
+ -  87 :  : klass_index=47 name_and_type_index=406
+ -  88 :  : klass_index=47 name_and_type_index=407
+ -  89 :  : klass_index=47 name_and_type_index=408
+ -  90 :  : klass_index=47 name_and_type_index=409
+ -  91 :  : klass_index=47 name_and_type_index=410
+ -  92 :  : klass_index=47 name_and_type_index=411
+ -  93 :  : klass_index=412 name_and_type_index=413
+ -  94 :  : klass_index=412 name_and_type_index=414
+ -  95 :  : klass_index=415 name_and_type_index=416
+ -  96 :  : klass_index=415 name_and_type_index=417
+ -  97 :  : 'java/util/Map$Entry'
+ -  98 :  : klass_index=97 name_and_type_index=419
+ -  99 :  : klass_index=412 name_and_type_index=420
+ - 100 :  : klass_index=97 name_and_type_index=421
+ - 101 :  : klass_index=422 name_and_type_index=423
+ - 102 :  : klass_index=422 name_and_type_index=424
+ - 103 :  : klass_index=425 name_and_type_index=341
+ - 104 :  : klass_index=425 name_and_type_index=344
+ - 105 :  : klass_index=47 name_and_type_index=426
+ - 106 :  : klass_index=47 name_and_type_index=427
+ - 107 :  : klass_index=422 name_and_type_index=428
+ - 108 :  : 'java/lang/Object' {0x77ae02b68}
+ - 109 :  : klass_index=108 name_and_type_index=333
+ - 110 :  : 'java/util/AbstractMap' {0x77aee0ec8}
+ - 111 :  : 'java/util/NavigableMap'
+ - 112 :  : 'java/lang/Cloneable'
+ - 113 :  : 'java/io/Serializable'
+ - 114 :  : 'Entry'
+ - 115 :  : 'InnerClasses'
+ - 116 :  : 'java/util/TreeMap$SubMap'
+ - 117 :  : 'SubMap'
+ - 118 :  : 'DescendingSubMap'
+ - 119 :  : 'AscendingSubMap'
+ - 120 :  : 'java/util/TreeMap$NavigableSubMap'
+ - 121 :  : 'NavigableSubMap'
+ - 122 :  : 'DescendingKeyIterator'
+ - 123 :  : 'KeyIterator'
+ - 124 :  : 'java/util/TreeMap$ValueIterator'
+ - 125 :  : 'ValueIterator'
+ - 126 :  : 'java/util/TreeMap$EntryIterator'
+ - 127 :  : 'EntryIterator'
+ - 128 :  : 'java/util/TreeMap$PrivateEntryIterator'
+ - 129 :  : 'PrivateEntryIterator'
+ - 130 :  : 'KeySet'
+ - 131 :  : 'EntrySet'
+ - 132 :  : 'Values'
+ - 133 :  : 'comparator'
+ - 134 :  : 'Ljava/util/Comparator;'
+ - 135 :  : 'Signature'
+ - 136 :  : 'Ljava/util/Comparator<-TK;>;'
+ - 137 :  : 'root'
+ - 138 :  : 'Ljava/util/TreeMap$Entry;'
+ - 139 :  : 'Ljava/util/TreeMap$Entry<TK;TV;>;'
+ - 140 :  : 'size'
+ - 141 :  : 'I'
+ - 142 :  : 'modCount'
+ - 143 :  : 'entrySet'
+ - 144 :  : 'Ljava/util/TreeMap$EntrySet;'
+ - 145 :  : 'Ljava/util/TreeMap<TK;TV;>.EntrySet;'
+ - 146 :  : 'navigableKeySet'
+ - 147 :  : 'Ljava/util/TreeMap$KeySet;'
+ - 148 :  : 'Ljava/util/TreeMap$KeySet<TK;>;'
+ - 149 :  : 'descendingMap'
+ - 150 :  : 'Ljava/util/NavigableMap;'
+ - 151 :  : 'Ljava/util/NavigableMap<TK;TV;>;'
+ - 152 :  : 'UNBOUNDED'
+ - 153 :  : 'Ljava/lang/Object;'
+ - 154 :  : 'RED'
+ - 155 :  : 'Z'
+ - 156 :  : 'ConstantValue'
+ - 157 :  : 0
+ - 158 :  : 'BLACK'
+ - 159 :  : 1
+ - 160 :  : 'serialVersionUID'
+ - 161 :  : 'J'
+ - 162 :  : 919286545866124006
+ - 164 :  : '<init>'
+ - 165 :  : '()V'
+ - 166 :  : 'Code'
+ - 167 :  : 'LineNumberTable'
+ - 168 :  : '(Ljava/util/Comparator;)V'
+ - 169 :  : '(Ljava/util/Comparator<-TK;>;)V'
+ - 170 :  : '(Ljava/util/Map;)V'
+ - 171 :  : '(Ljava/util/Map<+TK;+TV;>;)V'
+ - 172 :  : '(Ljava/util/SortedMap;)V'
+ - 173 :  : 'StackMapTable'
+ - 174 :  : 'java/util/TreeMap'
+ - 175 :  : 'java/util/SortedMap'
+ - 176 :  : 'java/io/IOException'
+ - 177 :  : 'java/lang/ClassNotFoundException'
+ - 178 :  : '(Ljava/util/SortedMap<TK;+TV;>;)V'
+ - 179 :  : '()I'
+ - 180 :  : 'containsKey'
+ - 181 :  : '(Ljava/lang/Object;)Z'
+ - 182 :  : 'containsValue'
+ - 183 :  : 'java/util/TreeMap$Entry'
+ - 184 :  : 'get'
+ - 185 :  : '(Ljava/lang/Object;)Ljava/lang/Object;'
+ - 186 :  : 'java/lang/Object'
+ - 187 :  : '(Ljava/lang/Object;)TV;'
+ - 188 :  : '()Ljava/util/Comparator;'
+ - 189 :  : '()Ljava/util/Comparator<-TK;>;'
+ - 190 :  : 'firstKey'
+ - 191 :  : '()Ljava/lang/Object;'
+ - 192 :  : '()TK;'
+ - 193 :  : 'lastKey'
+ - 194 :  : 'putAll'
+ - 195 :  : 'java/util/Comparator'
+ - 196 :  : 'getEntry'
+ - 197 :  : '(Ljava/lang/Object;)Ljava/util/TreeMap$Entry;'
+ - 198 :  : 'java/lang/Comparable'
+ - 199 :  : '(Ljava/lang/Object;)Ljava/util/TreeMap$Entry<TK;TV;>;'
+ - 200 :  : 'getEntryUsingComparator'
+ - 201 :  : 'getCeilingEntry'
+ - 202 :  : '(TK;)Ljava/util/TreeMap$Entry<TK;TV;>;'
+ - 203 :  : 'getFloorEntry'
+ - 204 :  : 'getHigherEntry'
+ - 205 :  : 'getLowerEntry'
+ - 206 :  : 'put'
+ - 207 :  : '(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;'
+ - 208 :  : '(TK;TV;)TV;'
+ - 209 :  : 'remove'
+ - 210 :  : 'clear'
+ - 211 :  : 'clone'
+ - 212 :  : 'java/lang/CloneNotSupportedException'
+ - 213 :  : 'firstEntry'
+ - 214 :  : '()Ljava/util/Map$Entry;'
+ - 215 :  : '()Ljava/util/Map$Entry<TK;TV;>;'
+ - 216 :  : 'lastEntry'
+ - 217 :  : 'pollFirstEntry'
+ - 218 :  : 'java/util/Map$Entry'
+ - 219 :  : 'pollLastEntry'
+ - 220 :  : 'lowerEntry'
+ - 221 :  : '(Ljava/lang/Object;)Ljava/util/Map$Entry;'
+ - 222 :  : '(TK;)Ljava/util/Map$Entry<TK;TV;>;'
+ - 223 :  : 'lowerKey'
+ - 224 :  : '(TK;)TK;'
+ - 225 :  : 'floorEntry'
+ - 226 :  : 'floorKey'
+ - 227 :  : 'ceilingEntry'
+ - 228 :  : 'ceilingKey'
+ - 229 :  : 'higherEntry'
+ - 230 :  : 'higherKey'
+ - 231 :  : 'keySet'
+ - 232 :  : '()Ljava/util/Set;'
+ - 233 :  : '()Ljava/util/Set<TK;>;'
+ - 234 :  : '()Ljava/util/NavigableSet;'
+ - 235 :  : 'java/util/TreeMap$KeySet'
+ - 236 :  : '()Ljava/util/NavigableSet<TK;>;'
+ - 237 :  : 'descendingKeySet'
+ - 238 :  : 'values'
+ - 239 :  : '()Ljava/util/Collection;'
+ - 240 :  : 'java/util/Collection'
+ - 241 :  : '()Ljava/util/Collection<TV;>;'
+ - 242 :  : 'java/util/TreeMap$EntrySet'
+ - 243 :  : '()Ljava/util/Set<Ljava/util/Map$Entry<TK;TV;>;>;'
+ - 244 :  : '()Ljava/util/NavigableMap;'
+ - 245 :  : 'java/util/NavigableMap'
+ - 246 :  : '()Ljava/util/NavigableMap<TK;TV;>;'
+ - 247 :  : 'subMap'
+ - 248 :  : '(Ljava/lang/Object;ZLjava/lang/Object;Z)Ljava/util/NavigableMap;'
+ - 249 :  : '(TK;ZTK;Z)Ljava/util/NavigableMap<TK;TV;>;'
+ - 250 :  : 'headMap'
+ - 251 :  : '(Ljava/lang/Object;Z)Ljava/util/NavigableMap;'
+ - 252 :  : '(TK;Z)Ljava/util/NavigableMap<TK;TV;>;'
+ - 253 :  : 'tailMap'
+ - 254 :  : '(Ljava/lang/Object;Ljava/lang/Object;)Ljava/util/SortedMap;'
+ - 255 :  : '(TK;TK;)Ljava/util/SortedMap<TK;TV;>;'
+ - 256 :  : '(Ljava/lang/Object;)Ljava/util/SortedMap;'
+ - 257 :  : '(TK;)Ljava/util/SortedMap<TK;TV;>;'
+ - 258 :  : 'keyIterator'
+ - 259 :  : '()Ljava/util/Iterator;'
+ - 260 :  : '()Ljava/util/Iterator<TK;>;'
+ - 261 :  : 'descendingKeyIterator'
+ - 262 :  : 'compare'
+ - 263 :  : '(Ljava/lang/Object;Ljava/lang/Object;)I'
+ - 264 :  : 'valEquals'
+ - 265 :  : '(Ljava/lang/Object;Ljava/lang/Object;)Z'
+ - 266 :  : 'exportEntry'
+ - 267 :  : '(Ljava/util/TreeMap$Entry;)Ljava/util/Map$Entry;'
+ - 268 :  : 'java/util/AbstractMap$SimpleImmutableEntry'
+ - 269 :  : '<K:Ljava/lang/Object;V:Ljava/lang/Object;>(Ljava/util/TreeMap$Entry<TK;TV;>;)Ljava/util/Map$Entry<TK;TV;>;'
+ - 270 :  : 'keyOrNull'
+ - 271 :  : '(Ljava/util/TreeMap$Entry;)Ljava/lang/Object;'
+ - 272 :  : '<K:Ljava/lang/Object;V:Ljava/lang/Object;>(Ljava/util/TreeMap$Entry<TK;TV;>;)TK;'
+ - 273 :  : 'key'
+ - 274 :  : '<K:Ljava/lang/Object;>(Ljava/util/TreeMap$Entry<TK;*>;)TK;'
+ - 275 :  : 'getFirstEntry'
+ - 276 :  : '()Ljava/util/TreeMap$Entry;'
+ - 277 :  : '()Ljava/util/TreeMap$Entry<TK;TV;>;'
+ - 278 :  : 'getLastEntry'
+ - 279 :  : 'successor'
+ - 280 :  : '(Ljava/util/TreeMap$Entry;)Ljava/util/TreeMap$Entry;'
+ - 281 :  : '<K:Ljava/lang/Object;V:Ljava/lang/Object;>(Ljava/util/TreeMap$Entry<TK;TV;>;)Ljava/util/TreeMap$Entry<TK;TV;>;'
+ - 282 :  : 'predecessor'
+ - 283 :  : 'colorOf'
+ - 284 :  : '(Ljava/util/TreeMap$Entry;)Z'
+ - 285 :  : '<K:Ljava/lang/Object;V:Ljava/lang/Object;>(Ljava/util/TreeMap$Entry<TK;TV;>;)Z'
+ - 286 :  : 'parentOf'
+ - 287 :  : 'setColor'
+ - 288 :  : '(Ljava/util/TreeMap$Entry;Z)V'
+ - 289 :  : '<K:Ljava/lang/Object;V:Ljava/lang/Object;>(Ljava/util/TreeMap$Entry<TK;TV;>;Z)V'
+ - 290 :  : 'leftOf'
+ - 291 :  : 'rightOf'
+ - 292 :  : 'rotateLeft'
+ - 293 :  : '(Ljava/util/TreeMap$Entry;)V'
+ - 294 :  : '(Ljava/util/TreeMap$Entry<TK;TV;>;)V'
+ - 295 :  : 'rotateRight'
+ - 296 :  : 'fixAfterInsertion'
+ - 297 :  : 'deleteEntry'
+ - 298 :  : 'fixAfterDeletion'
+ - 299 :  : 'writeObject'
+ - 300 :  : '(Ljava/io/ObjectOutputStream;)V'
+ - 301 :  : 'java/util/Iterator'
+ - 302 :  : 'Exceptions'
+ - 303 :  : 'readObject'
+ - 304 :  : '(Ljava/io/ObjectInputStream;)V'
+ - 305 :  : 'readTreeSet'
+ - 306 :  : '(ILjava/io/ObjectInputStream;Ljava/lang/Object;)V'
+ - 307 :  : '(ILjava/io/ObjectInputStream;TV;)V'
+ - 308 :  : 'addAllForTreeSet'
+ - 309 :  : '(Ljava/util/SortedSet;Ljava/lang/Object;)V'
+ - 310 :  : '(Ljava/util/SortedSet<+TK;>;TV;)V'
+ - 311 :  : 'buildFromSorted'
+ - 312 :  : '(ILjava/util/Iterator;Ljava/io/ObjectInputStream;Ljava/lang/Object;)V'
+ - 313 :  : '(ILjava/util/Iterator;Ljava/io/ObjectInputStream;TV;)V'
+ - 314 :  : '(IIIILjava/util/Iterator;Ljava/io/ObjectInputStream;Ljava/lang/Object;)Ljava/util/TreeMap$Entry;'
+ - 315 :  : '(IIIILjava/util/Iterator;Ljava/io/ObjectInputStream;TV;)Ljava/util/TreeMap$Entry<TK;TV;>;'
+ - 316 :  : 'computeRedLevel'
+ - 317 :  : '(I)I'
+ - 318 :  : 'access$000'
+ - 319 :  : '(Ljava/util/TreeMap;Ljava/util/TreeMap$Entry;)V'
+ - 320 :  : 'access$100'
+ - 321 :  : '(Ljava/util/TreeMap;)I'
+ - 322 :  : 'access$200'
+ - 323 :  : 'access$300'
+ - 324 :  : '(Ljava/util/TreeMap;)Ljava/util/Comparator;'
+ - 325 :  : '<clinit>'
+ - 326 :  : '<K:Ljava/lang/Object;V:Ljava/lang/Object;>Ljava/util/AbstractMap<TK;TV;>;Ljava/util/NavigableMap<TK;TV;>;Ljava/lang/Cloneable;Ljava/io/Serializable;'
+ - 327 :  : 'SourceFile'
+ - 328 :  : 'TreeMap.java'
+ - 329 :  : name_index=133 signature_index=134
+ - 330 :  : name_index=152 signature_index=153
+ - 331 :  : name_index=142 signature_index=141
+ - 332 :  : name_index=297 signature_index=293
+ - 333 :  : name_index=164 signature_index=165
+ - 334 :  : name_index=137 signature_index=138
+ - 335 :  : name_index=140 signature_index=141
+ - 336 :  : name_index=143 signature_index=144
+ - 337 :  : name_index=146 signature_index=147
+ - 338 :  : name_index=149 signature_index=150
+ - 339 :  : name_index=194 signature_index=170
+ - 340 :  : name_index=133 signature_index=188
+ - 341 :  : name_index=140 signature_index=179
+ - 342 :  : name_index=143 signature_index=232
+ - 343 :  : 'java/util/Set'
+ - 344 :  : name_index=443 signature_index=259
+ - 345 :  : name_index=311 signature_index=312
+ - 346 :  : 'java/io/IOException'
+ - 347 :  : 'java/lang/ClassNotFoundException'
+ - 348 :  : name_index=196 signature_index=197
+ - 349 :  : name_index=275 signature_index=276
+ - 350 :  : name_index=444 signature_index=153
+ - 351 :  : name_index=264 signature_index=265
+ - 352 :  : name_index=279 signature_index=280
+ - 353 :  : name_index=273 signature_index=271
+ - 354 :  : name_index=278 signature_index=276
+ - 355 :  : 'java/util/Map'
+ - 356 :  : 'java/util/SortedMap'
+ - 357 :  : 'java/util/Comparator' {0x77aeac360}
+ - 358 :  : name_index=446 signature_index=181
+ - 359 :  : name_index=200 signature_index=197
+ - 360 :  : 'java/lang/NullPointerException'
+ - 361 :  : 'java/lang/Comparable'
+ - 362 :  : name_index=273 signature_index=153
+ - 363 :  : name_index=447 signature_index=448
+ - 364 :  : name_index=449 signature_index=138
+ - 365 :  : name_index=450 signature_index=138
+ - 366 :  : name_index=262 signature_index=263
+ - 367 :  : name_index=451 signature_index=138
+ - 368 :  : 'java/util/TreeMap$Entry'
+ - 369 :  : name_index=164 signature_index=452
+ - 370 :  : name_index=453 signature_index=185
+ - 371 :  : name_index=296 signature_index=293
+ - 372 :  : name_index=211 signature_index=191
+ - 373 :  : 'java/util/TreeMap'
+ - 374 :  : 'java/lang/CloneNotSupportedException'
+ - 375 :  : 'java/lang/InternalError'
+ - 376 :  : name_index=266 signature_index=267
+ - 377 :  : name_index=205 signature_index=197
+ - 378 :  : name_index=270 signature_index=271
+ - 379 :  : name_index=203 signature_index=197
+ - 380 :  : name_index=201 signature_index=197
+ - 381 :  : name_index=204 signature_index=197
+ - 382 :  : name_index=146 signature_index=234
+ - 383 :  : 'java/util/TreeMap$KeySet'
+ - 384 :  : name_index=164 signature_index=454
+ - 385 :  : name_index=149 signature_index=244
+ - 386 :  : name_index=238 signature_index=455
+ - 387 :  : 'java/util/TreeMap$Values'
+ - 388 :  : name_index=164 signature_index=456
+ - 389 :  : 'java/util/TreeMap$EntrySet'
+ - 390 :  : 'java/util/TreeMap$DescendingSubMap'
+ - 391 :  : name_index=164 signature_index=457
+ - 392 :  : 'java/util/TreeMap$AscendingSubMap'
+ - 393 :  : name_index=247 signature_index=248
+ - 394 :  : name_index=250 signature_index=251
+ - 395 :  : name_index=253 signature_index=251
+ - 396 :  : 'java/util/TreeMap$KeyIterator'
+ - 397 :  : name_index=164 signature_index=319
+ - 398 :  : 'java/util/TreeMap$DescendingKeyIterator'
+ - 399 :  : 'java/util/AbstractMap$SimpleImmutableEntry'
+ - 400 :  : 'SimpleImmutableEntry'
+ - 401 :  : name_index=164 signature_index=458
+ - 402 :  : 'java/util/NoSuchElementException'
+ - 403 :  : name_index=459 signature_index=155
+ - 404 :  : name_index=286 signature_index=280
+ - 405 :  : name_index=290 signature_index=280
+ - 406 :  : name_index=291 signature_index=280
+ - 407 :  : name_index=283 signature_index=284
+ - 408 :  : name_index=287 signature_index=288
+ - 409 :  : name_index=292 signature_index=293
+ - 410 :  : name_index=295 signature_index=293
+ - 411 :  : name_index=298 signature_index=293
+ - 412 :  : 'java/io/ObjectOutputStream'
+ - 413 :  : name_index=461 signature_index=165
+ - 414 :  : name_index=462 signature_index=463
+ - 415 :  : 'java/util/Iterator'
+ - 416 :  : name_index=464 signature_index=465
+ - 417 :  : name_index=466 signature_index=191
+ - 418 :  : 'java/util/Map$Entry'
+ - 419 :  : name_index=467 signature_index=191
+ - 420 :  : name_index=299 signature_index=468
+ - 421 :  : name_index=469 signature_index=191
+ - 422 :  : 'java/io/ObjectInputStream'
+ - 423 :  : name_index=471 signature_index=165
+ - 424 :  : name_index=472 signature_index=179
+ - 425 :  : 'java/util/SortedSet'
+ - 426 :  : name_index=316 signature_index=317
+ - 427 :  : name_index=311 signature_index=314
+ - 428 :  : name_index=303 signature_index=191
+ - 429 :  : 'java/lang/Object'
+ - 430 :  : 'java/util/AbstractMap'
+ - 431 :  : 'java/util/NavigableMap'
+ - 432 :  : 'java/lang/Cloneable'
+ - 433 :  : 'java/io/Serializable'
+ - 434 :  : 'java/util/TreeMap$SubMap'
+ - 435 :  : 'java/util/TreeMap$NavigableSubMap'
+ - 436 :  : 'java/util/TreeMap$ValueIterator'
+ - 437 :  : 'java/util/TreeMap$EntryIterator'
+ - 438 :  : 'java/util/TreeMap$PrivateEntryIterator'
+ - 439 :  : 'java/util/Comparator'
+ - 440 :  : 'java/util/Collection'
+ - 441 :  : 'java/util/Iterator'
+ - 442 :  : 'java/util/Set'
+ - 443 :  : 'iterator'
+ - 444 :  : 'value'
+ - 445 :  : 'java/util/Map'
+ - 446 :  : 'equals'
+ - 447 :  : 'compareTo'
+ - 448 :  : '(Ljava/lang/Object;)I'
+ - 449 :  : 'left'
+ - 450 :  : 'right'
+ - 451 :  : 'parent'
+ - 452 :  : '(Ljava/lang/Object;Ljava/lang/Object;Ljava/util/TreeMap$Entry;)V'
+ - 453 :  : 'setValue'
+ - 454 :  : '(Ljava/util/NavigableMap;)V'
+ - 455 :  : 'Ljava/util/Collection;'
+ - 456 :  : '(Ljava/util/TreeMap;)V'
+ - 457 :  : '(Ljava/util/TreeMap;ZLjava/lang/Object;ZZLjava/lang/Object;Z)V'
+ - 458 :  : '(Ljava/util/Map$Entry;)V'
+ - 459 :  : 'color'
+ - 460 :  : 'java/io/ObjectOutputStream'
+ - 461 :  : 'defaultWriteObject'
+ - 462 :  : 'writeInt'
+ - 463 :  : '(I)V'
+ - 464 :  : 'hasNext'
+ - 465 :  : '()Z'
+ - 466 :  : 'next'
+ - 467 :  : 'getKey'
+ - 468 :  : '(Ljava/lang/Object;)V'
+ - 469 :  : 'getValue'
+ - 470 :  : 'java/io/ObjectInputStream'
+ - 471 :  : 'defaultReadObject'
+ - 472 :  : 'readInt'
+ - 473 :  : 'java/util/SortedSet'
+
+R10=0x000000010d81a0f0: _ZN19TemplateInterpreter13_active_tableE+0x4000 in /Library/Java/JavaVirtualMachines/jdk1.7.0_51.jdk/Contents/Home/jre/lib/server/libjvm.dylib at 0x000000010d000000
+R11=0x000000010de99b40 is at entry_point+0 in (nmethod*)0x000000010de998d0
+R12=0x0000000000000000 is an unknown value
+R13=0x000000077b5982dd is pointing into object: 0x000000077b598280
+{constMethod} 
+ - klass: {other class}
+ - constants:       0x000000077b594cd0 constant pool [474] for 'java/util/TreeMap' cache=0x000000077b59ca50
+bci_from(0x77b5982dd) = 29; print_codes():
+R14=0x000000010cf1cfb0 is an unknown value
+R15=0x000000010db4f910 is pointing into the stack for thread: 0x00007ffcc4041800
+
+
+Stack: [0x000000010da54000,0x000000010db54000],  sp=0x000000010db4f850,  free space=1006k
+Native frames: (J=compiled Java code, j=interpreted, Vv=VM code, C=native code)
+V  [libjvm.dylib+0x39eae8]  LinkResolver::resolve_invokeinterface(CallInfo&, Handle, constantPoolHandle, int, Thread*)+0x84
+V  [libjvm.dylib+0x2d1d42]  InterpreterRuntime::resolve_invoke(JavaThread*, Bytecodes::Code)+0x226
+j  java.util.TreeMap.getEntryUsingComparator(Ljava/lang/Object;)Ljava/util/TreeMap$Entry;+29
+j  java.util.TreeMap.getEntry(Ljava/lang/Object;)Ljava/util/TreeMap$Entry;+9
+j  java.util.TreeMap.get(Ljava/lang/Object;)Ljava/lang/Object;+2
+j  clojure.lang.Compiler$CaseExpr.doEmit(Lclojure/lang/Compiler$C;Lclojure/lang/Compiler$ObjExpr;Lclojure/asm/commons/GeneratorAdapter;Z)V+457
+j  clojure.lang.Compiler$CaseExpr.emit(Lclojure/lang/Compiler$C;Lclojure/lang/Compiler$ObjExpr;Lclojure/asm/commons/GeneratorAdapter;)V+5
+J  clojure.lang.Compiler$BodyExpr.emit(Lclojure/lang/Compiler$C;Lclojure/lang/Compiler$ObjExpr;Lclojure/asm/commons/GeneratorAdapter;)V
+J  clojure.lang.Compiler$BodyExpr.emit(Lclojure/lang/Compiler$C;Lclojure/lang/Compiler$ObjExpr;Lclojure/asm/commons/GeneratorAdapter;)V
+j  clojure.lang.Compiler$NewInstanceMethod.emit(Lclojure/lang/Compiler$ObjExpr;Lclojure/asm/ClassVisitor;)V+215
+j  clojure.lang.Compiler$NewInstanceExpr.emitMethods(Lclojure/asm/ClassVisitor;)V+25
+J  clojure.lang.Compiler$ObjExpr.compile(Ljava/lang/String;[Ljava/lang/String;Z)V
+j  clojure.lang.Compiler$NewInstanceExpr$DeftypeParser.parse(Lclojure/lang/Compiler$C;Ljava/lang/Object;)Lclojure/lang/Compiler$Expr;+156
+J  clojure.lang.Compiler.analyzeSeq(Lclojure/lang/Compiler$C;Lclojure/lang/ISeq;Ljava/lang/String;)Lclojure/lang/Compiler$Expr;
+J  clojure.lang.Compiler.analyzeSeq(Lclojure/lang/Compiler$C;Lclojure/lang/ISeq;Ljava/lang/String;)Lclojure/lang/Compiler$Expr;
+j  clojure.lang.Compiler.load(Ljava/io/Reader;Ljava/lang/String;Ljava/lang/String;)Ljava/lang/Object;+336
+j  clojure.lang.RT.loadResourceScript(Ljava/lang/Class;Ljava/lang/String;Z)V+53
+j  clojure.lang.RT.loadResourceScript(Ljava/lang/Class;Ljava/lang/String;)V+3
+j  clojure.lang.RT.load(Ljava/lang/String;Z)V+246
+j  clojure.lang.RT.load(Ljava/lang/String;)V+2
+j  clojure.core$load$fn__5018.invoke()Ljava/lang/Object;+17
+j  clojure.core$load.doInvoke(Ljava/lang/Object;)Ljava/lang/Object;+744
+j  clojure.lang.RestFn.invoke(Ljava/lang/Object;)Ljava/lang/Object;+50
+j  clojure.core$load_one.invoke(Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;+24
+j  clojure.core$load_lib$fn__4967.invoke()Ljava/lang/Object;+19
+j  clojure.core$load_lib.doInvoke(Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;+660
+j  clojure.lang.RestFn.applyTo(Lclojure/lang/ISeq;)Ljava/lang/Object;+195
+j  clojure.core$apply.invoke(Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;+29
+j  clojure.core$load_libs.doInvoke(Ljava/lang/Object;)Ljava/lang/Object;+1048
+j  clojure.lang.RestFn.applyTo(Lclojure/lang/ISeq;)Ljava/lang/Object;+136
+j  clojure.core$apply.invoke(Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;+29
+j  clojure.core$require.doInvoke(Ljava/lang/Object;)Ljava/lang/Object;+21
+j  clojure.lang.RestFn.invoke(Ljava/lang/Object;)Ljava/lang/Object;+50
+j  user$eval5.invoke()Ljava/lang/Object;+12
+j  clojure.lang.Compiler.eval(Ljava/lang/Object;Z)Ljava/lang/Object;+330
+j  clojure.lang.Compiler.eval(Ljava/lang/Object;Z)Ljava/lang/Object;+200
+j  clojure.lang.Compiler.eval(Ljava/lang/Object;Z)Ljava/lang/Object;+200
+j  clojure.lang.Compiler.load(Ljava/io/Reader;Ljava/lang/String;Ljava/lang/String;)Ljava/lang/Object;+336
+j  clojure.lang.Compiler.loadFile(Ljava/lang/String;)Ljava/lang/Object;+42
+j  clojure.main$load_script.invoke(Ljava/lang/Object;)Ljava/lang/Object;+67
+j  clojure.main$init_opt.invoke(Ljava/lang/Object;)Ljava/lang/Object;+12
+j  clojure.main$initialize.invoke(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;+134
+j  clojure.main$null_opt.invoke(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;+205
+j  clojure.main$main.doInvoke(Ljava/lang/Object;)Ljava/lang/Object;+257
+j  clojure.lang.RestFn.invoke(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;+60
+j  clojure.lang.Var.invoke(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;+6
+J  clojure.lang.AFn.applyToHelper(Lclojure/lang/IFn;Lclojure/lang/ISeq;)Ljava/lang/Object;
+j  clojure.main.main([Ljava/lang/String;)V+17
+v  ~StubRoutines::call_stub
+V  [libjvm.dylib+0x2d6bb0]  JavaCalls::call_helper(JavaValue*, methodHandle*, JavaCallArguments*, Thread*)+0x22a
+V  [libjvm.dylib+0x2d6980]  JavaCalls::call(JavaValue*, methodHandle, JavaCallArguments*, Thread*)+0x28
+V  [libjvm.dylib+0x30a124]  _ZL17jni_invoke_staticP7JNIEnv_P9JavaValueP8_jobject11JNICallTypeP10_jmethodIDP18JNI_ArgumentPusherP6Thread+0xe6
+V  [libjvm.dylib+0x3032bf]  jni_CallStaticVoidMethod+0x10b
+C  [java+0x30fe]  JavaMain+0x91d
+C  [libsystem_c.dylib+0x4e8bf]  _pthread_start+0x14f
+C  [libsystem_c.dylib+0x51b75]  thread_start+0xd
+
+Java frames: (J=compiled Java code, j=interpreted, Vv=VM code)
+j  java.util.TreeMap.getEntryUsingComparator(Ljava/lang/Object;)Ljava/util/TreeMap$Entry;+29
+j  java.util.TreeMap.getEntry(Ljava/lang/Object;)Ljava/util/TreeMap$Entry;+9
+j  java.util.TreeMap.get(Ljava/lang/Object;)Ljava/lang/Object;+2
+j  clojure.lang.Compiler$CaseExpr.doEmit(Lclojure/lang/Compiler$C;Lclojure/lang/Compiler$ObjExpr;Lclojure/asm/commons/GeneratorAdapter;Z)V+457
+j  clojure.lang.Compiler$CaseExpr.emit(Lclojure/lang/Compiler$C;Lclojure/lang/Compiler$ObjExpr;Lclojure/asm/commons/GeneratorAdapter;)V+5
+J  clojure.lang.Compiler$BodyExpr.emit(Lclojure/lang/Compiler$C;Lclojure/lang/Compiler$ObjExpr;Lclojure/asm/commons/GeneratorAdapter;)V
+J  clojure.lang.Compiler$LetExpr.doEmit(Lclojure/lang/Compiler$C;Lclojure/lang/Compiler$ObjExpr;Lclojure/asm/commons/GeneratorAdapter;Z)V
+j  clojure.lang.Compiler$LetExpr.emit(Lclojure/lang/Compiler$C;Lclojure/lang/Compiler$ObjExpr;Lclojure/asm/commons/GeneratorAdapter;)V+5
+J  clojure.lang.Compiler$BodyExpr.emit(Lclojure/lang/Compiler$C;Lclojure/lang/Compiler$ObjExpr;Lclojure/asm/commons/GeneratorAdapter;)V
+j  clojure.lang.Compiler$ObjMethod.emitBody(Lclojure/lang/Compiler$ObjExpr;Lclojure/asm/commons/GeneratorAdapter;Ljava/lang/Class;Lclojure/lang/Compiler$Expr;)V+255
+j  clojure.lang.Compiler$NewInstanceMethod.emit(Lclojure/lang/Compiler$ObjExpr;Lclojure/asm/ClassVisitor;)V+215
+j  clojure.lang.Compiler$NewInstanceExpr.emitMethods(Lclojure/asm/ClassVisitor;)V+25
+J  clojure.lang.Compiler$ObjExpr.compile(Ljava/lang/String;[Ljava/lang/String;Z)V
+j  clojure.lang.Compiler$NewInstanceExpr.build(Lclojure/lang/IPersistentVector;Lclojure/lang/IPersistentVector;Lclojure/lang/Symbol;Ljava/lang/String;Lclojure/lang/Symbol;Lclojure/lang/Symbol;Lclojure/lang/ISeq;Ljava/lang/Object;)Lclojure/lang/Compiler$ObjExpr;+902
+j  clojure.lang.Compiler$NewInstanceExpr$DeftypeParser.parse(Lclojure/lang/Compiler$C;Ljava/lang/Object;)Lclojure/lang/Compiler$Expr;+156
+J  clojure.lang.Compiler.analyzeSeq(Lclojure/lang/Compiler$C;Lclojure/lang/ISeq;Ljava/lang/String;)Lclojure/lang/Compiler$Expr;
+J  clojure.lang.Compiler.analyze(Lclojure/lang/Compiler$C;Ljava/lang/Object;Ljava/lang/String;)Lclojure/lang/Compiler$Expr;
+J  clojure.lang.Compiler$BodyExpr$Parser.parse(Lclojure/lang/Compiler$C;Ljava/lang/Object;)Lclojure/lang/Compiler$Expr;
+j  clojure.lang.Compiler$LetExpr$Parser.parse(Lclojure/lang/Compiler$C;Ljava/lang/Object;)Lclojure/lang/Compiler$Expr;+770
+J  clojure.lang.Compiler.analyzeSeq(Lclojure/lang/Compiler$C;Lclojure/lang/ISeq;Ljava/lang/String;)Lclojure/lang/Compiler$Expr;
+J  clojure.lang.Compiler.analyze(Lclojure/lang/Compiler$C;Ljava/lang/Object;Ljava/lang/String;)Lclojure/lang/Compiler$Expr;
+J  clojure.lang.Compiler$BodyExpr$Parser.parse(Lclojure/lang/Compiler$C;Ljava/lang/Object;)Lclojure/lang/Compiler$Expr;
+J  clojure.lang.Compiler$FnMethod.parse(Lclojure/lang/Compiler$ObjExpr;Lclojure/lang/ISeq;Z)Lclojure/lang/Compiler$FnMethod;
+J  clojure.lang.Compiler$FnExpr.parse(Lclojure/lang/Compiler$C;Lclojure/lang/ISeq;Ljava/lang/String;)Lclojure/lang/Compiler$Expr;
+J  clojure.lang.Compiler.analyzeSeq(Lclojure/lang/Compiler$C;Lclojure/lang/ISeq;Ljava/lang/String;)Lclojure/lang/Compiler$Expr;
+J  clojure.lang.Compiler.analyze(Lclojure/lang/Compiler$C;Ljava/lang/Object;Ljava/lang/String;)Lclojure/lang/Compiler$Expr;
+j  clojure.lang.Compiler.eval(Ljava/lang/Object;Z)Ljava/lang/Object;+310
+j  clojure.lang.Compiler.load(Ljava/io/Reader;Ljava/lang/String;Ljava/lang/String;)Ljava/lang/Object;+336
+j  clojure.lang.RT.loadResourceScript(Ljava/lang/Class;Ljava/lang/String;Z)V+53
+j  clojure.lang.RT.loadResourceScript(Ljava/lang/Class;Ljava/lang/String;)V+3
+j  clojure.lang.RT.load(Ljava/lang/String;Z)V+246
+j  clojure.lang.RT.load(Ljava/lang/String;)V+2
+j  clojure.core$load$fn__5018.invoke()Ljava/lang/Object;+17
+j  clojure.core$load.doInvoke(Ljava/lang/Object;)Ljava/lang/Object;+744
+j  clojure.lang.RestFn.invoke(Ljava/lang/Object;)Ljava/lang/Object;+50
+j  clojure.core$load_one.invoke(Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;+24
+j  clojure.core$load_lib$fn__4967.invoke()Ljava/lang/Object;+19
+j  clojure.core$load_lib.doInvoke(Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;+660
+j  clojure.lang.RestFn.applyTo(Lclojure/lang/ISeq;)Ljava/lang/Object;+195
+j  clojure.core$apply.invoke(Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;+29
+j  clojure.core$load_libs.doInvoke(Ljava/lang/Object;)Ljava/lang/Object;+1048
+j  clojure.lang.RestFn.applyTo(Lclojure/lang/ISeq;)Ljava/lang/Object;+136
+j  clojure.core$apply.invoke(Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;+29
+j  clojure.core$require.doInvoke(Ljava/lang/Object;)Ljava/lang/Object;+21
+j  clojure.lang.RestFn.invoke(Ljava/lang/Object;)Ljava/lang/Object;+50
+j  user$eval5.invoke()Ljava/lang/Object;+12
+j  clojure.lang.Compiler.eval(Ljava/lang/Object;Z)Ljava/lang/Object;+330
+j  clojure.lang.Compiler.eval(Ljava/lang/Object;Z)Ljava/lang/Object;+200
+j  clojure.lang.Compiler.eval(Ljava/lang/Object;Z)Ljava/lang/Object;+200
+j  clojure.lang.Compiler.load(Ljava/io/Reader;Ljava/lang/String;Ljava/lang/String;)Ljava/lang/Object;+336
+j  clojure.lang.Compiler.loadFile(Ljava/lang/String;)Ljava/lang/Object;+42
+j  clojure.main$load_script.invoke(Ljava/lang/Object;)Ljava/lang/Object;+67
+j  clojure.main$init_opt.invoke(Ljava/lang/Object;)Ljava/lang/Object;+12
+j  clojure.main$initialize.invoke(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;+134
+j  clojure.main$null_opt.invoke(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;+205
+j  clojure.main$main.doInvoke(Ljava/lang/Object;)Ljava/lang/Object;+257
+j  clojure.lang.RestFn.invoke(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;+60
+j  clojure.lang.Var.invoke(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;+6
+J  clojure.lang.AFn.applyToHelper(Lclojure/lang/IFn;Lclojure/lang/ISeq;)Ljava/lang/Object;
+j  clojure.lang.Var.applyTo(Lclojure/lang/ISeq;)Ljava/lang/Object;+2
+j  clojure.main.main([Ljava/lang/String;)V+17
+v  ~StubRoutines::call_stub
+
+---------------  P R O C E S S  ---------------
+
+Java Threads: ( => current thread )
+  0x00007ffcc6004000 JavaThread "Service Thread" daemon [_thread_blocked, id=22019, stack(0x000000011aad5000,0x000000011abd5000)]
+  0x00007ffcc6003800 JavaThread "C1 CompilerThread2" daemon [_thread_blocked, id=21507, stack(0x000000011a9d2000,0x000000011aad2000)]
+  0x00007ffcc6002800 JavaThread "C2 CompilerThread1" daemon [_thread_blocked, id=20995, stack(0x000000011a8cf000,0x000000011a9cf000)]
+  0x00007ffcc6001000 JavaThread "C2 CompilerThread0" daemon [_thread_blocked, id=20483, stack(0x000000011a7cc000,0x000000011a8cc000)]
+  0x00007ffcc6000000 JavaThread "Signal Dispatcher" daemon [_thread_blocked, id=19971, stack(0x000000011a6c9000,0x000000011a7c9000)]
+  0x00007ffcc5031000 JavaThread "Finalizer" daemon [_thread_blocked, id=15875, stack(0x000000011a3c1000,0x000000011a4c1000)]
+  0x00007ffcc502e800 JavaThread "Reference Handler" daemon [_thread_blocked, id=15363, stack(0x000000011a2be000,0x000000011a3be000)]
+=>0x00007ffcc4041800 JavaThread "main" [_thread_in_vm, id=2059, stack(0x000000010da54000,0x000000010db54000)]
+
+Other Threads:
+  0x00007ffcc405b000 VMThread [stack: 0x000000011a1bb000,0x000000011a2bb000] [id=14851]
+  0x00007ffcc5042000 WatcherThread [stack: 0x000000011abd8000,0x000000011acd8000] [id=22531]
+
+VM state:not at safepoint (normal execution)
+
+VM Mutex/Monitor currently owned by a thread: None
+
+Heap
+ PSYoungGen      total 72704K, used 29310K [0x00000007d5500000, 0x00000007de300000, 0x0000000800000000)
+  eden space 67584K, 36% used [0x00000007d5500000,0x00000007d6d379b8,0x00000007d9700000)
+  from space 5120K, 88% used [0x00000007d9700000,0x00000007d9b67f88,0x00000007d9c00000)
+  to   space 5120K, 0% used [0x00000007dde00000,0x00000007dde00000,0x00000007de300000)
+ ParOldGen       total 87040K, used 32K [0x0000000780000000, 0x0000000785500000, 0x00000007d5500000)
+  object space 87040K, 0% used [0x0000000780000000,0x0000000780008000,0x0000000785500000)
+ PSPermGen       total 21504K, used 12449K [0x000000077ae00000, 0x000000077c300000, 0x0000000780000000)
+  object space 21504K, 57% used [0x000000077ae00000,0x000000077ba287c0,0x000000077c300000)
+
+Card table byte_map: [0x0000000113d17000,0x0000000114141000] byte_map_base: 0x0000000110140000
+
+Polling page: 0x000000010cefa000
+
+Code Cache  [0x000000010db97000, 0x000000010df27000, 0x0000000113b97000)
+ total_blobs=1601 nmethods=1326 adapters=210 free_code_cache=94693Kb largest_free_block=96966080
+
+Compilation events (10 events):
+Event: 2.420 Thread 0x00007ffcc6003800 1327       1       clojure.lang.Compiler$MethodParamExpr::canEmitPrimitive (8 bytes)
+Event: 2.420 Thread 0x00007ffcc6003800 nmethod 1327 0x000000010df1bf10 code [0x000000010df1c080, 0x000000010df1c248]
+Event: 2.422 Thread 0x00007ffcc6003800 1328       1       clojure.core$chunk_first::invoke (12 bytes)
+Event: 2.422 Thread 0x00007ffcc6003800 nmethod 1328 0x000000010df1c310 code [0x000000010df1c480, 0x000000010df1c648]
+Event: 2.422 Thread 0x00007ffcc6003800 1329       1       clojure.lang.ChunkedCons::chunkedMore (16 bytes)
+Event: 2.422 Thread 0x00007ffcc6003800 nmethod 1329 0x000000010df1c6d0 code [0x000000010df1c820, 0x000000010df1c990]
+Event: 2.422 Thread 0x00007ffcc6003800 1330       1       clojure.lang.PersistentHashSet::createWithCheck (70 bytes)
+Event: 2.423 Thread 0x00007ffcc6003800 nmethod 1330 0x000000010df1c9d0 code [0x000000010df1cbc0, 0x000000010df1d218]
+Event: 2.425 Thread 0x00007ffcc6003800 1331       1       clojure.asm.commons.GeneratorAdapter::loadInsn (17 bytes)
+Event: 2.425 Thread 0x00007ffcc6003800 nmethod 1331 0x000000010df1d650 code [0x000000010df1d7c0, 0x000000010df1d978]
+
+GC Heap History (6 events):
+Event: 1.053 GC heap before
+{Heap before GC invocations=1 (full 0):
+ PSYoungGen      total 38912K, used 33792K [0x00000007d5500000, 0x00000007d8000000, 0x0000000800000000)
+  eden space 33792K, 100% used [0x00000007d5500000,0x00000007d7600000,0x00000007d7600000)
+  from space 5120K, 0% used [0x00000007d7b00000,0x00000007d7b00000,0x00000007d8000000)
+  to   space 5120K, 0% used [0x00000007d7600000,0x00000007d7600000,0x00000007d7b00000)
+ ParOldGen       total 87040K, used 0K [0x0000000780000000, 0x0000000785500000, 0x00000007d5500000)
+  object space 87040K, 0% used [0x0000000780000000,0x0000000780000000,0x0000000785500000)
+ PSPermGen       total 21504K, used 6890K [0x000000077ae00000, 0x000000077c300000, 0x0000000780000000)
+  object space 21504K, 32% used [0x000000077ae00000,0x000000077b4ba8d8,0x000000077c300000)
+Event: 1.065 GC heap after
+Heap after GC invocations=1 (full 0):
+ PSYoungGen      total 38912K, used 3854K [0x00000007d5500000, 0x00000007da100000, 0x0000000800000000)
+  eden space 33792K, 0% used [0x00000007d5500000,0x00000007d5500000,0x00000007d7600000)
+  from space 5120K, 75% used [0x00000007d7600000,0x00000007d79c3800,0x00000007d7b00000)
+  to   space 5120K, 0% used [0x00000007d9c00000,0x00000007d9c00000,0x00000007da100000)
+ ParOldGen       total 87040K, used 8K [0x0000000780000000, 0x0000000785500000, 0x00000007d5500000)
+  object space 87040K, 0% used [0x0000000780000000,0x0000000780002000,0x0000000785500000)
+ PSPermGen       total 21504K, used 6890K [0x000000077ae00000, 0x000000077c300000, 0x0000000780000000)
+  object space 21504K, 32% used [0x000000077ae00000,0x000000077b4ba8d8,0x000000077c300000)
+}
+Event: 1.496 GC heap before
+{Heap before GC invocations=2 (full 0):
+ PSYoungGen      total 38912K, used 37646K [0x00000007d5500000, 0x00000007da100000, 0x0000000800000000)
+  eden space 33792K, 100% used [0x00000007d5500000,0x00000007d7600000,0x00000007d7600000)
+  from space 5120K, 75% used [0x00000007d7600000,0x00000007d79c3800,0x00000007d7b00000)
+  to   space 5120K, 0% used [0x00000007d9c00000,0x00000007d9c00000,0x00000007da100000)
+ ParOldGen       total 87040K, used 8K [0x0000000780000000, 0x0000000785500000, 0x00000007d5500000)
+  object space 87040K, 0% used [0x0000000780000000,0x0000000780002000,0x0000000785500000)
+ PSPermGen       total 21504K, used 10096K [0x000000077ae00000, 0x000000077c300000, 0x0000000780000000)
+  object space 21504K, 46% used [0x000000077ae00000,0x000000077b7dc350,0x000000077c300000)
+Event: 1.506 GC heap after
+Heap after GC invocations=2 (full 0):
+ PSYoungGen      total 72704K, used 4711K [0x00000007d5500000, 0x00000007da100000, 0x0000000800000000)
+  eden space 67584K, 0% used [0x00000007d5500000,0x00000007d5500000,0x00000007d9700000)
+  from space 5120K, 92% used [0x00000007d9c00000,0x00000007da099c38,0x00000007da100000)
+  to   space 5120K, 0% used [0x00000007d9700000,0x00000007d9700000,0x00000007d9c00000)
+ ParOldGen       total 87040K, used 16K [0x0000000780000000, 0x0000000785500000, 0x00000007d5500000)
+  object space 87040K, 0% used [0x0000000780000000,0x0000000780004000,0x0000000785500000)
+ PSPermGen       total 21504K, used 10096K [0x000000077ae00000, 0x000000077c300000, 0x0000000780000000)
+  object space 21504K, 46% used [0x000000077ae00000,0x000000077b7dc350,0x000000077c300000)
+}
+Event: 2.202 GC heap before
+{Heap before GC invocations=3 (full 0):
+ PSYoungGen      total 72704K, used 72295K [0x00000007d5500000, 0x00000007da100000, 0x0000000800000000)
+  eden space 67584K, 100% used [0x00000007d5500000,0x00000007d9700000,0x00000007d9700000)
+  from space 5120K, 92% used [0x00000007d9c00000,0x00000007da099c38,0x00000007da100000)
+  to   space 5120K, 0% used [0x00000007d9700000,0x00000007d9700000,0x00000007d9c00000)
+ ParOldGen       total 87040K, used 16K [0x0000000780000000, 0x0000000785500000, 0x00000007d5500000)
+  object space 87040K, 0% used [0x0000000780000000,0x0000000780004000,0x0000000785500000)
+ PSPermGen       total 21504K, used 11709K [0x000000077ae00000, 0x000000077c300000, 0x0000000780000000)
+  object space 21504K, 54% used [0x000000077ae00000,0x000000077b96f628,0x000000077c300000)
+Event: 2.211 GC heap after
+Heap after GC invocations=3 (full 0):
+ PSYoungGen      total 72704K, used 4511K [0x00000007d5500000, 0x00000007de300000, 0x0000000800000000)
+  eden space 67584K, 0% used [0x00000007d5500000,0x00000007d5500000,0x00000007d9700000)
+  from space 5120K, 88% used [0x00000007d9700000,0x00000007d9b67f88,0x00000007d9c00000)
+  to   space 5120K, 0% used [0x00000007dde00000,0x00000007dde00000,0x00000007de300000)
+ ParOldGen       total 87040K, used 32K [0x0000000780000000, 0x0000000785500000, 0x00000007d5500000)
+  object space 87040K, 0% used [0x0000000780000000,0x0000000780008000,0x0000000785500000)
+ PSPermGen       total 21504K, used 11709K [0x000000077ae00000, 0x000000077c300000, 0x0000000780000000)
+  object space 21504K, 54% used [0x000000077ae00000,0x000000077b96f628,0x000000077c300000)
+}
+
+Deoptimization events (0 events):
+No events
+
+Internal exceptions (10 events):
+Event: 2.423 Thread 0x00007ffcc4041800 Threw 0x00000007d6c77138 at /HUDSON/workspace/7u-2-build-macosx-x86_64/jdk7u51/527/hotspot/src/share/vm/prims/jvm.cpp:1244
+Event: 2.423 Thread 0x00007ffcc4041800 Threw 0x00000007d6c777f8 at /HUDSON/workspace/7u-2-build-macosx-x86_64/jdk7u51/527/hotspot/src/share/vm/prims/jvm.cpp:1244
+Event: 2.423 Thread 0x00007ffcc4041800 Threw 0x00000007d6c78e30 at /HUDSON/workspace/7u-2-build-macosx-x86_64/jdk7u51/527/hotspot/src/share/vm/prims/jvm.cpp:1244
+Event: 2.423 Thread 0x00007ffcc4041800 Threw 0x00000007d6c7f6d8 at /HUDSON/workspace/7u-2-build-macosx-x86_64/jdk7u51/527/hotspot/src/share/vm/prims/jvm.cpp:1244
+Event: 2.424 Thread 0x00007ffcc4041800 Threw 0x00000007d6c7fd98 at /HUDSON/workspace/7u-2-build-macosx-x86_64/jdk7u51/527/hotspot/src/share/vm/prims/jvm.cpp:1244
+Event: 2.424 Thread 0x00007ffcc4041800 Threw 0x00000007d6c80458 at /HUDSON/workspace/7u-2-build-macosx-x86_64/jdk7u51/527/hotspot/src/share/vm/prims/jvm.cpp:1244
+Event: 2.424 Thread 0x00007ffcc4041800 Threw 0x00000007d6c80b18 at /HUDSON/workspace/7u-2-build-macosx-x86_64/jdk7u51/527/hotspot/src/share/vm/prims/jvm.cpp:1244
+Event: 2.424 Thread 0x00007ffcc4041800 Threw 0x00000007d6c811d8 at /HUDSON/workspace/7u-2-build-macosx-x86_64/jdk7u51/527/hotspot/src/share/vm/prims/jvm.cpp:1244
+Event: 2.424 Thread 0x00007ffcc4041800 Threw 0x00000007d6c81898 at /HUDSON/workspace/7u-2-build-macosx-x86_64/jdk7u51/527/hotspot/src/share/vm/prims/jvm.cpp:1244
+Event: 2.424 Thread 0x00007ffcc4041800 Threw 0x00000007d6c81f58 at /HUDSON/workspace/7u-2-build-macosx-x86_64/jdk7u51/527/hotspot/src/share/vm/prims/jvm.cpp:1244
+
+Events (10 events):
+Event: 2.419 loading class 0x00007ffcc3e26340
+Event: 2.419 loading class 0x00007ffcc3e26340 done
+Event: 2.420 loading class 0x00007ffcc3e26340
+Event: 2.420 loading class 0x00007ffcc3e26340 done
+Event: 2.421 loading class 0x00007ffcc3e26340
+Event: 2.421 loading class 0x00007ffcc3e26340 done
+Event: 2.423 loading class 0x00007ffcc3e26220
+Event: 2.423 loading class 0x00007ffcc3e26220 done
+Event: 2.423 loading class 0x00007ffcc3e26220
+Event: 2.423 loading class 0x00007ffcc3e26220 done
+
+
+Dynamic libraries:
+0x0000000000de7000 	/System/Library/Frameworks/Cocoa.framework/Versions/A/Cocoa
+0x0000000000de7000 	/System/Library/Frameworks/Security.framework/Versions/A/Security
+0x0000000000de7000 	/System/Library/Frameworks/ApplicationServices.framework/Versions/A/ApplicationServices
+0x0000000000de7000 	/usr/lib/libz.1.dylib
+0x0000000000de7000 	/usr/lib/libSystem.B.dylib
+0x0000000000de7000 	/usr/lib/libobjc.A.dylib
+0x0000000000de7000 	/System/Library/Frameworks/CoreFoundation.framework/Versions/A/CoreFoundation
+0x0000000000de7000 	/System/Library/Frameworks/Foundation.framework/Versions/C/Foundation
+0x0000000000de7000 	/System/Library/Frameworks/AppKit.framework/Versions/C/AppKit
+0x0000000000de7000 	/System/Library/Frameworks/CoreData.framework/Versions/A/CoreData
+0x0000000000de7000 	/System/Library/PrivateFrameworks/RemoteViewServices.framework/Versions/A/RemoteViewServices
+0x0000000000de7000 	/System/Library/Frameworks/AudioToolbox.framework/Versions/A/AudioToolbox
+0x0000000000de7000 	/System/Library/Frameworks/AudioUnit.framework/Versions/A/AudioUnit
+0x0000000000de7000 	/System/Library/PrivateFrameworks/DataDetectorsCore.framework/Versions/A/DataDetectorsCore
+0x0000000000de7000 	/System/Library/PrivateFrameworks/DesktopServicesPriv.framework/Versions/A/DesktopServicesPriv
+0x0000000000de7000 	/System/Library/Frameworks/Carbon.framework/Versions/A/Frameworks/HIToolbox.framework/Versions/A/HIToolbox
+0x0000000000de7000 	/System/Library/Frameworks/QuartzCore.framework/Versions/A/QuartzCore
+0x0000000000de7000 	/System/Library/Frameworks/Carbon.framework/Versions/A/Frameworks/SpeechRecognition.framework/Versions/A/SpeechRecognition
+0x0000000000de7000 	/usr/lib/libauto.dylib
+0x0000000000de7000 	/usr/lib/libicucore.A.dylib
+0x0000000000de7000 	/usr/lib/libxml2.2.dylib
+0x0000000000de7000 	/System/Library/PrivateFrameworks/CoreUI.framework/Versions/A/CoreUI
+0x0000000000de7000 	/System/Library/Frameworks/CoreAudio.framework/Versions/A/CoreAudio
+0x0000000000de7000 	/System/Library/Frameworks/DiskArbitration.framework/Versions/A/DiskArbitration
+0x0000000000de7000 	/usr/lib/liblangid.dylib
+0x0000000000de7000 	/System/Library/PrivateFrameworks/MultitouchSupport.framework/Versions/A/MultitouchSupport
+0x0000000000de7000 	/System/Library/Frameworks/IOKit.framework/Versions/A/IOKit
+0x0000000000de7000 	/usr/lib/libDiagnosticMessagesClient.dylib
+0x0000000000de7000 	/System/Library/Frameworks/CoreServices.framework/Versions/A/CoreServices
+0x0000000000de7000 	/System/Library/PrivateFrameworks/PerformanceAnalysis.framework/Versions/A/PerformanceAnalysis
+0x0000000000de7000 	/System/Library/PrivateFrameworks/GenerationalStorage.framework/Versions/A/GenerationalStorage
+0x0000000000de7000 	/System/Library/Frameworks/OpenGL.framework/Versions/A/OpenGL
+0x0000000000de7000 	/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/CFNetwork.framework/Versions/A/CFNetwork
+0x0000000000de7000 	/System/Library/Frameworks/SystemConfiguration.framework/Versions/A/SystemConfiguration
+0x0000000000de7000 	/usr/lib/libCRFSuite.dylib
+0x0000000000de7000 	/usr/lib/libc++.1.dylib
+0x0000000000de7000 	/usr/lib/libstdc++.6.dylib
+0x0000000000de7000 	/usr/lib/libc++abi.dylib
+0x0000000000de7000 	/usr/lib/system/libcache.dylib
+0x0000000000de7000 	/usr/lib/system/libcommonCrypto.dylib
+0x0000000000de7000 	/usr/lib/system/libcompiler_rt.dylib
+0x0000000000de7000 	/usr/lib/system/libcopyfile.dylib
+0x0000000000de7000 	/usr/lib/system/libdispatch.dylib
+0x0000000000de7000 	/usr/lib/system/libdnsinfo.dylib
+0x0000000000de7000 	/usr/lib/system/libdyld.dylib
+0x0000000000de7000 	/usr/lib/system/libkeymgr.dylib
+0x0000000000de7000 	/usr/lib/system/liblaunch.dylib
+0x0000000000de7000 	/usr/lib/system/libmacho.dylib
+0x0000000000de7000 	/usr/lib/system/libmathCommon.A.dylib
+0x0000000000de7000 	/usr/lib/system/libquarantine.dylib
+0x0000000000de7000 	/usr/lib/system/libremovefile.dylib
+0x0000000000de7000 	/usr/lib/system/libsystem_blocks.dylib
+0x0000000000de7000 	/usr/lib/system/libsystem_c.dylib
+0x0000000000de7000 	/usr/lib/system/libsystem_dnssd.dylib
+0x0000000000de7000 	/usr/lib/system/libsystem_info.dylib
+0x0000000000de7000 	/usr/lib/system/libsystem_kernel.dylib
+0x0000000000de7000 	/usr/lib/system/libsystem_network.dylib
+0x0000000000de7000 	/usr/lib/system/libsystem_notify.dylib
+0x0000000000de7000 	/usr/lib/system/libsystem_sandbox.dylib
+0x0000000000de7000 	/usr/lib/system/libunc.dylib
+0x0000000000de7000 	/usr/lib/system/libunwind.dylib
+0x0000000000de7000 	/usr/lib/system/libxpc.dylib
+0x0000000000de7000 	/usr/lib/libbsm.0.dylib
+0x0000000000de7000 	/usr/lib/libsqlite3.dylib
+0x0000000000de7000 	/usr/lib/libOpenScriptingUtil.dylib
+0x0000000000de7000 	/usr/lib/libpam.2.dylib
+0x0000000000de7000 	/usr/lib/libxar-nossl.dylib
+0x0000000000de7000 	/usr/lib/libbz2.1.0.dylib
+0x0000000000de7000 	/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/CarbonCore.framework/Versions/A/CarbonCore
+0x0000000000de7000 	/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/Metadata.framework/Versions/A/Metadata
+0x0000000000de7000 	/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/OSServices.framework/Versions/A/OSServices
+0x0000000000de7000 	/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/SearchKit.framework/Versions/A/SearchKit
+0x0000000000de7000 	/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/AE.framework/Versions/A/AE
+0x0000000000de7000 	/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/LaunchServices.framework/Versions/A/LaunchServices
+0x0000000000de7000 	/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/DictionaryServices.framework/Versions/A/DictionaryServices
+0x0000000000de7000 	/System/Library/Frameworks/NetFS.framework/Versions/A/NetFS
+0x0000000000de7000 	/usr/lib/system/libkxld.dylib
+0x0000000000de7000 	/System/Library/PrivateFrameworks/NetAuth.framework/Versions/A/NetAuth
+0x0000000000de7000 	/usr/lib/libcrypto.0.9.8.dylib
+0x0000000000de7000 	/System/Library/PrivateFrameworks/TrustEvaluationAgent.framework/Versions/A/TrustEvaluationAgent
+0x0000000000de7000 	/System/Library/Frameworks/OpenDirectory.framework/Versions/A/Frameworks/CFOpenDirectory.framework/Versions/A/CFOpenDirectory
+0x0000000000de7000 	/usr/lib/libxslt.1.dylib
+0x0000000000de7000 	/System/Library/PrivateFrameworks/FamilyControls.framework/Versions/A/FamilyControls
+0x0000000000de7000 	/System/Library/Frameworks/Carbon.framework/Versions/A/Frameworks/Ink.framework/Versions/A/Ink
+0x0000000000de7000 	/System/Library/Frameworks/ApplicationServices.framework/Versions/A/Frameworks/CoreGraphics.framework/Versions/A/CoreGraphics
+0x0000000000de7000 	/System/Library/Frameworks/ApplicationServices.framework/Versions/A/Frameworks/ImageIO.framework/Versions/A/ImageIO
+0x0000000000de7000 	/System/Library/Frameworks/ApplicationServices.framework/Versions/A/Frameworks/CoreText.framework/Versions/A/CoreText
+0x0000000000de7000 	/System/Library/Frameworks/ApplicationServices.framework/Versions/A/Frameworks/ATS.framework/Versions/A/ATS
+0x0000000000de7000 	/System/Library/Frameworks/ApplicationServices.framework/Versions/A/Frameworks/ColorSync.framework/Versions/A/ColorSync
+0x0000000000de7000 	/System/Library/Frameworks/ApplicationServices.framework/Versions/A/Frameworks/HIServices.framework/Versions/A/HIServices
+0x0000000000de7000 	/System/Library/Frameworks/ApplicationServices.framework/Versions/A/Frameworks/LangAnalysis.framework/Versions/A/LangAnalysis
+0x0000000000de7000 	/System/Library/Frameworks/ApplicationServices.framework/Versions/A/Frameworks/PrintCore.framework/Versions/A/PrintCore
+0x0000000000de7000 	/System/Library/Frameworks/ApplicationServices.framework/Versions/A/Frameworks/QD.framework/Versions/A/QD
+0x0000000000de7000 	/System/Library/Frameworks/ApplicationServices.framework/Versions/A/Frameworks/SpeechSynthesis.framework/Versions/A/SpeechSynthesis
+0x0000000000de7000 	/System/Library/Frameworks/IOSurface.framework/Versions/A/IOSurface
+0x0000000000de7000 	/System/Library/Frameworks/Accelerate.framework/Versions/A/Accelerate
+0x0000000000de7000 	/System/Library/Frameworks/ApplicationServices.framework/Versions/A/Frameworks/ImageIO.framework/Versions/A/Resources/libJPEG.dylib
+0x0000000000de7000 	/System/Library/Frameworks/ApplicationServices.framework/Versions/A/Frameworks/ImageIO.framework/Versions/A/Resources/libTIFF.dylib
+0x0000000000de7000 	/System/Library/Frameworks/ApplicationServices.framework/Versions/A/Frameworks/ImageIO.framework/Versions/A/Resources/libPng.dylib
+0x0000000000de7000 	/System/Library/Frameworks/ApplicationServices.framework/Versions/A/Frameworks/ImageIO.framework/Versions/A/Resources/libGIF.dylib
+0x0000000000de7000 	/System/Library/Frameworks/ApplicationServices.framework/Versions/A/Frameworks/ImageIO.framework/Versions/A/Resources/libJP2.dylib
+0x0000000000de7000 	/System/Library/Frameworks/ApplicationServices.framework/Versions/A/Frameworks/ImageIO.framework/Versions/A/Resources/libRadiance.dylib
+0x0000000000de7000 	/System/Library/Frameworks/Accelerate.framework/Versions/A/Frameworks/vImage.framework/Versions/A/vImage
+0x0000000000de7000 	/System/Library/Frameworks/Accelerate.framework/Versions/A/Frameworks/vecLib.framework/Versions/A/vecLib
+0x0000000000de7000 	/System/Library/Frameworks/Accelerate.framework/Versions/A/Frameworks/vecLib.framework/Versions/A/libvDSP.dylib
+0x0000000000de7000 	/System/Library/Frameworks/Accelerate.framework/Versions/A/Frameworks/vecLib.framework/Versions/A/libvMisc.dylib
+0x0000000000de7000 	/System/Library/Frameworks/Accelerate.framework/Versions/A/Frameworks/vecLib.framework/Versions/A/libLAPACK.dylib
+0x0000000000de7000 	/System/Library/Frameworks/Accelerate.framework/Versions/A/Frameworks/vecLib.framework/Versions/A/libBLAS.dylib
+0x0000000000de7000 	/System/Library/Frameworks/ApplicationServices.framework/Versions/A/Frameworks/ATS.framework/Versions/A/Resources/libFontParser.dylib
+0x0000000000de7000 	/System/Library/Frameworks/ApplicationServices.framework/Versions/A/Frameworks/ATS.framework/Versions/A/Resources/libFontRegistry.dylib
+0x0000000000de7000 	/usr/lib/libcups.2.dylib
+0x0000000000de7000 	/System/Library/Frameworks/Kerberos.framework/Versions/A/Kerberos
+0x0000000000de7000 	/System/Library/Frameworks/GSS.framework/Versions/A/GSS
+0x0000000000de7000 	/usr/lib/libresolv.9.dylib
+0x0000000000de7000 	/usr/lib/libiconv.2.dylib
+0x0000000000de7000 	/System/Library/PrivateFrameworks/Heimdal.framework/Versions/A/Heimdal
+0x0000000000de7000 	/System/Library/Frameworks/OpenDirectory.framework/Versions/A/OpenDirectory
+0x0000000000de7000 	/System/Library/PrivateFrameworks/CommonAuth.framework/Versions/A/CommonAuth
+0x0000000000de7000 	/System/Library/Frameworks/CoreVideo.framework/Versions/A/CoreVideo
+0x0000000000de7000 	/System/Library/Frameworks/QuartzCore.framework/Versions/A/Frameworks/CoreImage.framework/Versions/A/CoreImage
+0x0000000000de7000 	/System/Library/Frameworks/QuartzCore.framework/Versions/A/Frameworks/ScalableUserInterface.framework/Versions/A/ScalableUserInterface
+0x0000000000de7000 	/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGLU.dylib
+0x0000000000de7000 	/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGFXShared.dylib
+0x0000000000de7000 	/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib
+0x0000000000de7000 	/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGLImage.dylib
+0x0000000000de7000 	/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libCVMSPluginSupport.dylib
+0x0000000000de7000 	/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libCoreVMClient.dylib
+0x0000000000de7000 	/System/Library/Frameworks/OpenCL.framework/Versions/A/OpenCL
+0x0000000000de7000 	/System/Library/PrivateFrameworks/FaceCoreLight.framework/Versions/A/FaceCoreLight
+0x0000000000de7000 	/System/Library/Frameworks/vecLib.framework/Versions/A/vecLib
+0x0000000000de7000 	/System/Library/Frameworks/SecurityFoundation.framework/Versions/A/SecurityFoundation
+0x0000000000de7000 	/System/Library/PrivateFrameworks/CommerceKit.framework/Versions/A/Frameworks/CommerceCore.framework/Versions/A/CommerceCore
+0x0000000000de7000 	/System/Library/PrivateFrameworks/CoreSymbolication.framework/Versions/A/CoreSymbolication
+0x0000000000de7000 	/System/Library/PrivateFrameworks/Symbolication.framework/Versions/A/Symbolication
+0x0000000000de7000 	/System/Library/PrivateFrameworks/DebugSymbols.framework/Versions/A/DebugSymbols
+0x000000010d000000 	/Library/Java/JavaVirtualMachines/jdk1.7.0_51.jdk/Contents/Home/jre/lib/server/libjvm.dylib
+0x000000010ceed000 	/Library/Java/JavaVirtualMachines/jdk1.7.0_51.jdk/Contents/Home/jre/lib/libverify.dylib
+0x000000010db56000 	/Library/Java/JavaVirtualMachines/jdk1.7.0_51.jdk/Contents/Home/jre/lib/libjava.dylib
+0x000000010db8e000 	/Library/Java/JavaVirtualMachines/jdk1.7.0_51.jdk/Contents/Home/jre/lib/libzip.dylib
+0x000000011a4c3000 	/System/Library/Frameworks/JavaVM.framework/Frameworks/JavaRuntimeSupport.framework/JavaRuntimeSupport
+0x000000011a4db000 	/System/Library/Frameworks/JavaVM.framework/Versions/A/Frameworks/JavaNativeFoundation.framework/Versions/A/JavaNativeFoundation
+0x000000011a4f0000 	/System/Library/Frameworks/JavaVM.framework/Versions/A/JavaVM
+0x0000000000de7000 	/System/Library/Frameworks/Carbon.framework/Versions/A/Carbon
+0x000000011a4fd000 	/System/Library/PrivateFrameworks/JavaLaunching.framework/Versions/A/JavaLaunching
+0x0000000000de7000 	/System/Library/Frameworks/Carbon.framework/Versions/A/Frameworks/CommonPanels.framework/Versions/A/CommonPanels
+0x0000000000de7000 	/System/Library/Frameworks/Carbon.framework/Versions/A/Frameworks/Help.framework/Versions/A/Help
+0x0000000000de7000 	/System/Library/Frameworks/Carbon.framework/Versions/A/Frameworks/ImageCapture.framework/Versions/A/ImageCapture
+0x0000000000de7000 	/System/Library/Frameworks/Carbon.framework/Versions/A/Frameworks/OpenScripting.framework/Versions/A/OpenScripting
+0x0000000000de7000 	/System/Library/Frameworks/Carbon.framework/Versions/A/Frameworks/Print.framework/Versions/A/Print
+0x0000000000de7000 	/System/Library/Frameworks/Carbon.framework/Versions/A/Frameworks/SecurityHI.framework/Versions/A/SecurityHI
+0x000000011af6d000 	/Library/Java/JavaVirtualMachines/jdk1.7.0_51.jdk/Contents/Home/jre/lib/libnio.dylib
+0x000000011af7c000 	/Library/Java/JavaVirtualMachines/jdk1.7.0_51.jdk/Contents/Home/jre/lib/./libnet.dylib
+
+VM Arguments:
+jvm_args: -XX:+TieredCompilation -XX:TieredStopAtLevel=1 -Dclojure.compile.path=/Users/tangrammer/git/heroku-clojure-rest/target/classes -Dheroku-clojure-rest.version=0.1.0-SNAPSHOT -Dfile.encoding=UTF-8 -Dclojure.debug=false 
+java_command: clojure.main -i /private/var/folders/pn/jvq07cv15n5d99l_yzrgw2mm0000gn/T/form-init522676612940652211.clj
+Launcher Type: SUN_STANDARD
+
+Environment Variables:
+CLASSPATH=:/Users/tangrammer/.lein/self-installs/leiningen-2.3.4-standalone.jar
+PATH=/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin:/usr/X11/bin
+SHELL=/bin/bash
+DISPLAY=/tmp/launch-8SjuBs/org.x:0
+
+Signal Handlers:
+SIGSEGV: [libjvm.dylib+0x525425], sa_mask[0]=0xfffefeff, sa_flags=0x00000043
+SIGBUS: [libjvm.dylib+0x525425], sa_mask[0]=0xfffefeff, sa_flags=0x00000042
+SIGFPE: [libjvm.dylib+0x41892a], sa_mask[0]=0xfffefeff, sa_flags=0x00000042
+SIGPIPE: [libjvm.dylib+0x41892a], sa_mask[0]=0xfffefeff, sa_flags=0x00000042
+SIGXFSZ: [libjvm.dylib+0x41892a], sa_mask[0]=0xfffefeff, sa_flags=0x00000042
+SIGILL: [libjvm.dylib+0x41892a], sa_mask[0]=0xfffefeff, sa_flags=0x00000042
+SIGUSR1: SIG_DFL, sa_mask[0]=0x63807efb, sa_flags=0x00000000
+SIGUSR2: [libjvm.dylib+0x41841c], sa_mask[0]=0x00000004, sa_flags=0x00000042
+SIGHUP: [libjvm.dylib+0x4166ab], sa_mask[0]=0xfffefeff, sa_flags=0x00000042
+SIGINT: [libjvm.dylib+0x4166ab], sa_mask[0]=0xfffefeff, sa_flags=0x00000042
+SIGTERM: [libjvm.dylib+0x4166ab], sa_mask[0]=0xfffefeff, sa_flags=0x00000042
+SIGQUIT: [libjvm.dylib+0x4166ab], sa_mask[0]=0xfffefeff, sa_flags=0x00000042
+
+
+---------------  S Y S T E M  ---------------
+
+OS:Bsduname:Darwin 11.4.2 Darwin Kernel Version 11.4.2: Thu Aug 23 16:25:48 PDT 2012; root:xnu-1699.32.7~1/RELEASE_X86_64 x86_64
+rlimit: STACK 8515k, CORE 0k, NPROC 709, NOFILE 10240, AS infinity
+load average:2.01 2.15 2.07
+
+CPU:total 4 (2 cores per cpu, 2 threads per core) family 6 model 42 stepping 7, cmov, cx8, fxsr, mmx, sse, sse2, sse3, ssse3, sse4.1, sse4.2, popcnt, avx, aes, ht, tsc, tscinvbit
+
+Memory: 4k page, physical 8388608k(2097152k free)
+
+/proc/meminfo:
+
+
+vm_info: Java HotSpot(TM) 64-Bit Server VM (24.51-b03) for bsd-amd64 JRE (1.7.0_51-b13), built on Dec 18 2013 18:45:56 by "java_re" with gcc 4.2.1 (Based on Apple Inc. build 5658) (LLVM build 2336.11.00)
+
+time: Wed Feb  5 13:23:08 2014
+elapsed time: 2 seconds
+

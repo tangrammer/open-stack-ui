@@ -18,7 +18,9 @@ First, modify core.clj to indicate which is the index.html, in this case "produc
 
 ## Usage
 
-FIXME
+shared channel between react/om components example https://gist.github.com/tangrammer/8840332
+composite component example
+https://gist.github.com/tangrammer/8841925
 
 ## License
 

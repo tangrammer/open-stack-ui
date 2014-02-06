@@ -29,8 +29,6 @@
   [:body] (enlive/append
            (enlive/html [:h1 "production"])))
 
-(def posts (ref []))
-
 
 (defroutes app
   (resources "/")
@@ -58,20 +56,15 @@
 
 )
 
-(def admin-routes
-  (-> app1
-      (middleware/wrap-json-response  {:keywords? true})
-))
 
 (declare server)
 
 (def handler
   (comphand/api (routes
                  app
-                 admin-routes)
-))
-(comment
- (run-jetty #'handler {:port 5000}))
+                 (-> app1
+                     (middleware/wrap-json-response  {:keywords? true})))))
+
 
 (defn -main [port]
    (def server (run-jetty #'handler {:port (Integer. port) :join? false }))
