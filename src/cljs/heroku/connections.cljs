@@ -20,6 +20,21 @@
     (.-value input)
 ))
 
+(defn connect-tenants-list [channel url token-id]
+  (GET
+  "/tenants"
+  {:params {:url url :token-id token-id}
+   :handler (fn [response]
+              (println response)
+              (if (:success response)
+                (do
+                  ;(swap! app-state assoc :url url)
+                  (put! channel  {:token-id token-id :tenants (:tenants response)}))
+                (js/alert response)))
+   :error-handler util/error-handler
+   :response-format :json
+   :keywords? true}))
+
 (defn connect-base [channel url  username password]
   (GET
   "/connect"
@@ -27,9 +42,8 @@
    :handler (fn [response]
               (println response)
               (if (:success response)
-                (do
-                  ;(swap! app-state assoc :url url)
-                  (put! channel  (get-in response [:access :token :id])))
+                (connect-tenants-list channel url (get-in response [:access :token :id]))
+
                 (js/alert response)))
    :error-handler util/error-handler
    :response-format :json
@@ -55,13 +69,15 @@
     (init-state [_]
       {:try-to-connect (chan)})
      om/IWillMount
-    (will-mount [_]
-      (let [try-to-connect (om/get-state owner :try-to-connect)]
+     (will-mount [_]
+             (let [try-to-connect (om/get-state owner :try-to-connect)
+            flow (om/get-state owner :flow)]
         (go (loop []
-              (let [data (<! try-to-connect)]
-                (println data)
-;                (om/transact! app :connection-type (fn [_] connection-type))
+              (let [data-readed (<! try-to-connect)]
+                (om/update! data merge data-readed)
+                (put! flow :tenants)
                 (recur))))))
+
 
     om/IRenderState
     (render-state [this {:keys [try-to-connect flow]}]
@@ -98,10 +114,12 @@
       {:try-to-connect (chan)})
      om/IWillMount
     (will-mount [_]
-      (let [try-to-connect (om/get-state owner :try-to-connect)]
+      (let [try-to-connect (om/get-state owner :try-to-connect)
+            flow (om/get-state owner :flow)]
         (go (loop []
               (let [data-readed (<! try-to-connect)]
                 (om/update! data merge data-readed)
+                (put! flow :endpoints)
                 (recur))))))
 
     om/IRenderState
