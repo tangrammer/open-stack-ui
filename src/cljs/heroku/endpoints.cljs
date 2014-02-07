@@ -10,7 +10,7 @@
    [cljs.core.async :refer [put! chan <!]])
   )
 
-(defn service-call [channel token-id publicURL url]
+(defn service-call [channel service-id token-id publicURL url]
   (println token-id publicURL url)
   (GET
    "/service-call"
@@ -18,9 +18,7 @@
     :handler (fn [response]
                (if (:success response)
                  (do
-;                   (swap! app-state assoc (:id av) ((:id av) response))
-                                        ; (put! channel  ((:id av) response))
-                   (println response)
+                   (put! channel {service-id (service-id response) :model service-id})
                    )
                  (js/alert response)))
     :error-handler util/error-handler
@@ -41,7 +39,10 @@
                 (dom/button #js {
                                  :onClick #(do
                                              ;(.dir js/console owner)
-                                             (service-call (om/get-state owner :try-to-call) (:token-id @app) (:publicURL @tenant) (:url av))
+                                             (service-call (om/get-state owner :try-to-call)
+                                                           (:id av)
+                                                           (:token-id @app)
+                                                           (:publicURL @tenant) (:url av))
                                              )
                                  :className "btn btn-primary btn-xs"} (:url av)) )
 
@@ -62,8 +63,7 @@
             flow (om/get-state owner :flow)]
         (go (loop []
               (let [data-readed (<! try-to-call)]
-                                        ;                (om/update! data merge data-readed)
-                (println data-readed)
+                (om/update! app merge data-readed)
                 (put! flow :service)
                 (recur))))))
     om/IRenderState

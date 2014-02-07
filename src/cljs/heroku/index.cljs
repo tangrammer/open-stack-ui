@@ -1,6 +1,7 @@
 (ns heroku.index
   (:require-macros [cljs.core.async.macros :refer [go]])
   (:require
+
    [heroku.util :as util]
    [heroku.nav :as nav]
    [heroku.endpoints :as eps]
@@ -78,6 +79,7 @@
                    :connection (om/build conns/connections app {:init-state state} )
                    :endpoints (om/build eps/epss app {:init-state state})
                    :tenants (om/build tenants/tenants app )
+                   :service (dom/h2 nil (dom/pre nil (dom/code nil (JSON/stringify (clj->js ((:model app) app))))))
                    )
                  ))
       )))

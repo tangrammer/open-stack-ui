@@ -17,7 +17,9 @@
 		 [ring/ring-core "1.2.1"]
                  [ring/ring-json "0.2.0"]
                  [ring/ring-jetty-adapter "1.1.0"]
-                 [enlive "1.1.5"]]
+                 [enlive "1.1.5"]
+                 [org.clojure/data.json "0.2.4"]
+]
   :plugins [[com.cemerick/austin "0.1.3"]
             [lein-cljsbuild "1.0.1"]]
   :profiles {:dev {:repl-options { :nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]}
