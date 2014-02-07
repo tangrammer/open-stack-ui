@@ -79,10 +79,11 @@
                    :connection (om/build conns/connections app {:init-state state} )
                    :endpoints (om/build eps/epss app {:init-state state})
                    :tenants (om/build tenants/tenants app )
-                   :service (dom/h2 nil (dom/pre nil (dom/code nil (JSON/stringify (clj->js ((:model app) app))))))
-                   )
-                 ))
-      )))
+                   :service (do (dom/div #js {:id "service" :style #js {  :width "100%" }}
+                                         (dom/h2 nil (str "service call!: " (:model app)))
+                                         (dom/button #js {:className "btn  btn-primary " :type "button"
+                                                          :onClick #(put! (om/get-state owner :flow) :endpoints)} "endpoints again!")
+                                         (dom/pre nil (dom/code nil (JSON/stringify (clj->js ((:model app) app)) nil 2)))))))))))
 
 (defn container [app owner]
   (reify
