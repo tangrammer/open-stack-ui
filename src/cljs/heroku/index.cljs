@@ -14,65 +14,80 @@
 (enable-console-print!)
 
 (defn dir [o]
-      (.dir js/console o)
-  )
-
-(def app-state (atom {:title "the app tittle" :nav "the nav"}))
-
+  (.dir js/console o))
 
 (defn menu [app owner]
   (reify
-    om/IRender
-    (render [this]
-      (dom/div #js {:id "menu"  :style #js{:float "left" :backgroundColor "orange" :color "white"}}
-               (dom/h3 nil (:nav app))
-        )))
-  )
+    om/IInitState
+    (init-state [_]
+      {:selection (chan)})
+    om/IWillMount
+    (will-mount [_]
+      (let [selection (om/get-state owner :selection) flow (om/get-state owner :flow)]
+        (go (loop []
+              (let [selection-type (<! selection)]
+                (put! flow selection-type)
+                (recur))))))
+    om/IRenderState
+    (render-state  [this {:keys [selection]}]
+      (dom/div #js {:id "menu"  :style #js{:float "left" :margin-right "50px" :width "300px"}}
+               (dom/ul #js {:className "nav nav-tabs nav-stacked"}
+                       (dom/li #js {:ref "welcome" :className ""}
+                               (dom/a #js {:href "#" :onClick #(do
+                                        ;(change-cssclass owner "tenant" "active")
+                                        ;(change-cssclass owner "base" "")
+                                                                 (put! selection :welcome))} "Welcome to OS UI"))
+                       (dom/li #js {:ref "connection" :className ""}
+                               (dom/a #js {:href "#"
+                                           :onClick #(do
+                                        ;(change-cssclass owner "base" "active")
+                                        ;(change-cssclass owner "tenant" "")
+                                                       (put! selection :connection))
+                                           } "Connect to a OS Instance"))
+                       )
 
+
+               ))))
 
 (defn content [app owner]
   (reify
+    om/IInitState
+    (init-state [_]
+      {:flow (chan)})
 
     om/IWillMount
     (will-mount [_]
-      (let [connection (om/get-state owner :connection)]
+      (let [flow (om/get-state owner :flow)]
         (go (loop []
-              (let [connection-type (<! connection)]
-                (println "listened new connection type: " connection-type)
-                (om/set-state! owner :connection-type connection-type)
-                (println "setted: "(om/get-state owner :connection-type ))
+              (let [flow-state (<! flow)]
+                (om/transact! app :flow-state (fn [_] flow-state))
                 (recur))))))
 
     om/IRenderState
-    (render-state [this {:keys [connection-type]}]
+    (render-state [this state]
+      (println "reading" (:flow-state app))
 
-
-      (dom/div #js {:id "content" :style #js {:float "left"  :width "800px"}}
-
-;               (dom/h2 nil "Content DIV")
- ;              (dom/h3 nil (:title @app))
-               (println "aaaaa" connection-type)
-               (if (= connection-type :base)
-                 (om/build conns/base app )
-                 (om/build conns/tenant app )
-                 )
-               )
-)))
-
+      (let [flow-state (:flow-state app)]
+        (dom/div #js {:id "content" :style #js {  :width "100%" }}
+                 (om/build menu app {:init-state state} )
+                                        ;
+                 (condp = flow-state
+                   :welcome (dom/h2 nil (str "Welcome!! " (:flow-state app)))
+                   :connection (om/build conns/connections app {:init-state state} )
+                   :endpoints (dom/h2 nil (str "EPS!! " (:eps app)))
+                   )
+                 ))
+      )))
 
 (defn container [app owner]
   (reify
-    om/IInitState
-    (init-state [_]
-      {:connection (chan)
-       :connection-type :base})
-    om/IRenderState
-    (render-state [this state]
-      (dom/div #js {:id "container" :style #js {:width "1000px" :backgroundColor "white"}}
-               (dom/h2 nil "Container")
-               (om/build nav/navbar app {:init-state state})
-               (om/build menu app )
-              (om/build content app {:init-state state})
-               ))))
+    om/IRender
+    (render [this]
+      (dom/div #js {:id "container" :style #js {:width "1200px" }}
+                                        ;(dom/h2 nil "Container")
 
+
+               (om/build content app )
+               ))))
+(def app-state (atom {:title "the app tittle" :menu "the menu" :flow-state :welcome}))
 (om/root app-state container (. js/document (getElementById "my-app")))

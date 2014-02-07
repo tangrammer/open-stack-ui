@@ -40,7 +40,7 @@
 (defroutes app1
 
   (ANY "/connect" [url username password]
-       (println url username password)
+       (println "." url "." username "." password ".")
        (resp/response (tokens url username password)))
   (ANY "/tenants" [url token-id]
        (println url token-id)

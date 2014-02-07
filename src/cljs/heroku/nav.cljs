@@ -22,7 +22,7 @@
       (dom/nav #js {:className "navbar navbar-default" :role "navigation"}
                (dom/div #js {:className "collapse navbar-collapse"}
                         (dom/ul #js {:className "nav navbar-nav"}
-                                (dom/li #js {:ref "base" :className "peo"}
+                                (dom/li #js {:ref "base" :className "active"}
                                         (dom/a #js {:href "#"
                                                     :onClick #(do
                                                                 (change-cssclass owner "base" "active")
