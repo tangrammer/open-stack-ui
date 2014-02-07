@@ -86,7 +86,6 @@
 
 (defn try-to-call [token-id publicURL av]
   (println token-id publicURL av)
-
   (GET
    "/service-call"
    {:params {:token-id token-id :publicURL publicURL :path (:url av)}

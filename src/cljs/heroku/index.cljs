@@ -76,7 +76,7 @@
                  (condp = flow-state
                    :welcome (dom/h2 nil (str "Welcome!! " (:flow-state app)))
                    :connection (om/build conns/connections app {:init-state state} )
-                   :endpoints (om/build eps/epss app )
+                   :endpoints (om/build eps/epss app {:init-state state})
                    :tenants (om/build tenants/tenants app )
                    )
                  ))
