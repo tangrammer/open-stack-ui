@@ -3,6 +3,8 @@
   (:require
    [heroku.util :as util]
    [heroku.nav :as nav]
+   [heroku.endpoints :as eps]
+   [heroku.tenants :as tenants]
    [heroku.connections :as conns]
    [ajax.core :refer [GET POST]]
    [om.core :as om :include-macros true]
@@ -65,7 +67,7 @@
 
     om/IRenderState
     (render-state [this state]
-      (println "reading" (:flow-state app))
+     ; (println "reading" (:flow-state app))
 
       (let [flow-state (:flow-state app)]
         (dom/div #js {:id "content" :style #js {  :width "100%" }}
@@ -74,8 +76,8 @@
                  (condp = flow-state
                    :welcome (dom/h2 nil (str "Welcome!! " (:flow-state app)))
                    :connection (om/build conns/connections app {:init-state state} )
-                   :endpoints (dom/h2 nil (str "EPS!! " (:endpoints app)))
-                   :tenants (dom/h2 nil (str "tenantslist!! " (:tenants app)))
+                   :endpoints (om/build eps/epss app )
+                   :tenants (om/build tenants/tenants app )
                    )
                  ))
       )))
