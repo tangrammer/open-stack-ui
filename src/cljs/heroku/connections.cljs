@@ -53,18 +53,6 @@
 
 (defn base [data owner]
   (reify
-    om/IInitState
-    (init-state [_]
-      {:try-to-connect (chan)})
-    om/IWillMount
-    (will-mount [_]
-      (let [try-to-connect (om/get-state owner :try-to-connect)
-            flow (om/get-state owner :flow)]
-        (go (loop []
-              (let [data-readed (<! try-to-connect)]
-                (om/update! data merge data-readed)
-                (put! flow :tenants)
-                (recur))))))
 
 
     om/IRenderState
@@ -93,7 +81,7 @@
                 (dom/button #js {:className "btn  btn-inverse  btn-mini" :type "button"
                                  :onClick #(put! flow :welcome)} "Exit!")
                 ))))
-
+;(put! flow :welcome)
 (defn connect-tennant [channel url username password tenant]
   (GET
    "/endpoints"
@@ -110,19 +98,6 @@
 
 (defn tenant [data owner]
   (reify
-    om/IInitState
-    (init-state [_]
-      {:try-to-connect (chan)})
-    om/IWillMount
-    (will-mount [_]
-      (let [try-to-connect (om/get-state owner :try-to-connect)
-            flow (om/get-state owner :flow)]
-        (go (loop []
-              (let [data-readed (<! try-to-connect)]
-                (om/update! data merge data-readed)
-                (put! flow :endpoints)
-                (recur))))))
-
     om/IRenderState
     (render-state [this {:keys [try-to-connect]}]
       (dom/form #js {:className "form-signin" :role "form" }
@@ -149,7 +124,8 @@
                                                                                                                          (get-value owner "password")
                                                                                                                          (get-value owner "tenant") )} "Connect!")
                 ))))
-
+(comment
+  si recibo un channel)
 (defn connections [app owner]
   (reify
     om/IInitState
@@ -158,7 +134,8 @@
        :connection-type :base})
 
     om/IWillMount
-    (will-mount [_]
+    (will-mount [this]
+      (om/set-state! owner :hola "hola" )
       (let [connection (om/get-state owner :connection)]
         (go (loop []
               (let [connection-type (<! connection)]
@@ -172,11 +149,30 @@
         (dom/div #js {:id "connections" :style #js {:float "left"  :width "800px"}}
 
                                         ;(dom/h2 nil (str "Content DIV" connection-type))
-                                        ;              (dom/h3 nil (:title @app))
+                 (dom/h3 nil (om/get-state owner :hola))
                  (om/build nav/navbar app {:init-state state} )
                  (if (= connection-type :base)
-                   (om/build base app {:init-state state} )
-                   (om/build tenant app {:init-state state} )
+                   (om/build base app {:init-state (let [c (chan)
+                                                         flow (om/get-state owner :flow)]
+
+                                                     (go (loop []
+                                                           (let [data-readed (<! c)]
+                                                             (om/update! app merge data-readed)
+                                        ;                                                             (put! flow :tenants)
+                                                             (put! flow (fn [app ](om/build tenants/tenants app )))
+                                                             (recur))))
+
+                                                     (assoc state :try-to-connect c))} )
+                   (om/build tenant app {:init-state (let [c (chan)
+                                                           flow (om/get-state owner :flow)]
+
+                                                       (go (loop []
+                                                             (let [data-readed (<! c)]
+                                                               (om/update! app merge data-readed)
+                                                               (put! flow :endpoints)
+                                                               (recur))))
+
+                                                       (assoc state :try-to-connect c))} )
                    )
                  ))
       )))

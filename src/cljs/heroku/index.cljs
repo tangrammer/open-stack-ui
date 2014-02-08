@@ -57,34 +57,46 @@
   (reify
     om/IInitState
     (init-state [_]
-      {:flow (chan)})
+      {:flow (chan)
+       :stock :welcome})
 
     om/IWillMount
     (will-mount [_]
       (let [flow (om/get-state owner :flow)]
         (go (loop []
               (let [flow-state (<! flow)]
-                (om/transact! app :flow-state (fn [_] flow-state))
+
+                (println (str "type::: "(keyword? flow-state)))
+                                        ;                (om/transact! app :flow-state (fn [_] flow-state))
+                (om/set-state! owner :stock flow-state)
                 (recur))))))
 
     om/IRenderState
     (render-state [this state]
      ; (println "reading" (:flow-state app))
 
-      (let [flow-state (:flow-state app)]
+      (let [flow-state (:stock state)]
         (dom/div #js {:id "content" :style #js {  :width "100%" }}
                  (om/build menu app {:init-state state} )
                                         ;
-                 (condp = flow-state
-                   :welcome (dom/h2 nil (str "Welcome!! " (:flow-state app)))
-                   :connection (om/build conns/connections app {:init-state state} )
-                   :endpoints (om/build eps/epss app {:init-state state})
-                   :tenants (om/build tenants/tenants app )
-                   :service (do (dom/div #js {:id "service" :style #js {  :width "100%" }}
-                                         (dom/h2 nil (str "service call!: " (:model app)))
-                                         (dom/button #js {:className "btn  btn-primary " :type "button"
-                                                          :onClick #(put! (om/get-state owner :flow) :endpoints)} "endpoints again!")
-                                         (dom/pre nil (dom/code nil (JSON/stringify (clj->js ((:model app) app)) nil 2)))))))))))
+                 (if (keyword? flow-state)
+                   (condp = flow-state
+                     :welcome (dom/h2 nil (str "Welcome!! " (:flow-state app)))
+                     :connection (om/build conns/connections app {:init-state state} )
+                     :endpoints (om/build eps/epss app {:init-state state})
+                     :tenants (om/build tenants/tenants app )
+                     :service (do (dom/div #js {:id "service" :style #js {  :width "100%" }}
+                                           (dom/h2 nil (str "service call!: " (:model app)))
+                                           (dom/button #js {:className "btn  btn-primary " :type "button"
+                                                            :onClick #(put! (om/get-state owner :flow) :endpoints)} "endpoints again!")
+                                           (dom/pre nil (dom/code nil (JSON/stringify (clj->js ((:model app) app)) nil 2)))))
+                     (js/alert (str  "else" flow-state))
+                     )
+                                        ;(js/alert "ofu")
+                   (flow-state app)
+                   )
+
+                 )))))
 
 (defn container [app owner]
   (reify
@@ -99,7 +111,7 @@
 (def app-state (atom {:title "the app tittle" :menu "the menu" :flow-state :welcome}))
 
 (om/root app-state container (. js/document (getElementById "my-app")))
-(om/build eps/epss app-state {:init-state state})
+
 
 (defn testing [state]
   (swap! app-state assoc :flow-state state)
