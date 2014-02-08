@@ -52,6 +52,7 @@
 
                ))))
 
+
 (defn content [app owner]
   (reify
     om/IInitState
@@ -96,4 +97,10 @@
                (om/build content app )
                ))))
 (def app-state (atom {:title "the app tittle" :menu "the menu" :flow-state :welcome}))
+
 (om/root app-state container (. js/document (getElementById "my-app")))
+(om/build eps/epss app-state {:init-state state})
+
+(defn testing [state]
+  (swap! app-state assoc :flow-state state)
+  )

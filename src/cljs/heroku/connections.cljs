@@ -3,6 +3,8 @@
   (:require
    [heroku.util :as util]
    [heroku.nav :as nav]
+   [heroku.tenants :as tenants]
+   [heroku.endpoints :as endpoints]
    [ajax.core :refer [GET POST]]
    [om.core :as om :include-macros true]
    [om.dom :as dom :include-macros true]
@@ -18,59 +20,45 @@
 (defn get-value [owner ref]
   (let [input (om/get-node owner ref)]
     (.-value input)
-))
+    ))
 
 (defn connect-tenants-list [channel url token-id]
   (GET
-  "/tenants"
-  {:params {:url url :token-id token-id}
-   :handler (fn [response]
-              (println response)
-              (if (:success response)
-                (do
-                  ;(swap! app-state assoc :url url)
-                  (put! channel  {:token-id token-id :tenants (:tenants response)}))
-                (js/alert response)))
-   :error-handler util/error-handler
-   :response-format :json
-   :keywords? true}))
+   "/tenants"
+   {:params {:url url :token-id token-id}
+    :handler (fn [response]
+               (println response)
+               (if (:success response)
+                 (do
+                                        ;(swap! app-state assoc :url url)
+                   (put! channel  {:token-id token-id :tenants (:tenants response)}))
+                 (js/alert response)))
+    :error-handler util/error-handler
+    :response-format :json
+    :keywords? true}))
 
 (defn connect-base [channel url  username password]
   (GET
-  "/connect"
-  {:params {:url url :username username :password password}
-   :handler (fn [response]
-              (println response)
-              (if (:success response)
-                (connect-tenants-list channel url (get-in response [:access :token :id]))
+   "/connect"
+   {:params {:url url :username username :password password}
+    :handler (fn [response]
+               (println response)
+               (if (:success response)
+                 (connect-tenants-list channel url (get-in response [:access :token :id]))
 
-                (js/alert response)))
-   :error-handler util/error-handler
-   :response-format :json
-   :keywords? true}))
-
-(defn connect-tennant [channel url username password tenant]
-(GET
-       "/endpoints"
-       {:params {:url url :password password :username username :tenantname tenant  }
-        :handler (fn [response]
-                   (if (:success response)
-                     (put! channel {:token-id (get-in response [:access :token :id]) :endpoints (util/structured-endpoints response)})
-
-                     (js/alert response)))
-        :error-handler util/error-handler
-        :response-format :json
-        :keywords? true})
-  )
+                 (js/alert response)))
+    :error-handler util/error-handler
+    :response-format :json
+    :keywords? true}))
 
 (defn base [data owner]
   (reify
     om/IInitState
     (init-state [_]
       {:try-to-connect (chan)})
-     om/IWillMount
-     (will-mount [_]
-             (let [try-to-connect (om/get-state owner :try-to-connect)
+    om/IWillMount
+    (will-mount [_]
+      (let [try-to-connect (om/get-state owner :try-to-connect)
             flow (om/get-state owner :flow)]
         (go (loop []
               (let [data-readed (<! try-to-connect)]
@@ -81,7 +69,6 @@
 
     om/IRenderState
     (render-state [this {:keys [try-to-connect flow]}]
-
       (dom/form #js {:className "form-signin" :role "form" }
 
                 (dom/h2 #js {:className "form-signin-heading"} "Try a connection")
@@ -99,20 +86,34 @@
                 (dom/input #js {:ref "password" :defaultValue password :type "password" :className "form-control" :placeholder "Password" :required true }  )
                 (dom/button #js {:className "btn btn-lg btn-primary btn-block" :type "button"
                                  :onClick #(connect-base try-to-connect
-                                                           (get-value owner "url")
-                                                           (get-value owner "username")
-                                                           (get-value owner "password") )} "Connect!")
+                                                         (get-value owner "url")
+                                                         (get-value owner "username")
+                                                         (get-value owner "password") )} "Connect!")
                 (dom/h1 nil " ")
                 (dom/button #js {:className "btn  btn-inverse  btn-mini" :type "button"
                                  :onClick #(put! flow :welcome)} "Exit!")
                 ))))
 
+(defn connect-tennant [channel url username password tenant]
+  (GET
+   "/endpoints"
+   {:params {:url url :password password :username username :tenantname tenant  }
+    :handler (fn [response]
+               (if (:success response)
+                 (put! channel {:token-id (get-in response [:access :token :id]) :endpoints (util/structured-endpoints response)})
+
+                 (js/alert response)))
+    :error-handler util/error-handler
+    :response-format :json
+    :keywords? true})
+  )
+
 (defn tenant [data owner]
   (reify
-        om/IInitState
+    om/IInitState
     (init-state [_]
       {:try-to-connect (chan)})
-     om/IWillMount
+    om/IWillMount
     (will-mount [_]
       (let [try-to-connect (om/get-state owner :try-to-connect)
             flow (om/get-state owner :flow)]
@@ -143,10 +144,10 @@
 
                 (dom/input #js {:ref "tenant" :defaultValue username :type "text" :className "form-control" :placeholder "Tenant name" :required true }  )
                 (dom/button #js {:className "btn btn-lg btn-primary btn-block" :type "button" :onClick #(connect-tennant try-to-connect
-                                                           (get-value owner "url")
-                                                           (get-value owner "username")
-                                                           (get-value owner "password")
-                                                           (get-value owner "tenant") )} "Connect!")
+                                                                                                                         (get-value owner "url")
+                                                                                                                         (get-value owner "username")
+                                                                                                                         (get-value owner "password")
+                                                                                                                         (get-value owner "tenant") )} "Connect!")
                 ))))
 
 (defn connections [app owner]
@@ -170,7 +171,7 @@
       (let [connection-type (om/get-state owner :connection-type)]
         (dom/div #js {:id "connections" :style #js {:float "left"  :width "800px"}}
 
-                ;(dom/h2 nil (str "Content DIV" connection-type))
+                                        ;(dom/h2 nil (str "Content DIV" connection-type))
                                         ;              (dom/h3 nil (:title @app))
                  (om/build nav/navbar app {:init-state state} )
                  (if (= connection-type :base)
