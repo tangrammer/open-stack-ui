@@ -130,11 +130,12 @@
   (reify
     om/IInitState
     (init-state [_]
-      {:connection (chan)
+      {
        :connection-type :base})
 
     om/IWillMount
     (will-mount [this]
+      (om/set-state! owner :connection  (om/get-state owner :in-chan))
       (om/set-state! owner :hola "hola" )
       (let [connection (om/get-state owner :connection)]
         (go (loop []

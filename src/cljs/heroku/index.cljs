@@ -11,7 +11,7 @@
    [om.core :as om :include-macros true]
    [om.dom :as dom :include-macros true]
    [clojure.browser.repl]
-   [cljs.core.async :refer [put! chan <!]])
+   [cljs.core.async :refer [put! chan <! >!]])
   )
 
 (enable-console-print!)
@@ -52,20 +52,32 @@
 
                ))))
 
+(def content-chan (chan))
+(def content-in-chan (chan))
 
 (defn content [app owner]
   (reify
     om/IInitState
     (init-state [_]
-      {:flow (chan)
+      (println "INIT STATE")
+      {:flow  content-chan
        :stock :welcome})
-
+om/IDidMount
+    (did-mount [_  _]
+      (println "DID MOUNT OK")
+      )
+    om/IDidUpdate
+    (did-update [_ _ _ _]
+      (println "DID UPDATE OK")
+;      (put!  "UPDATE OK *******************************")
+      )
     om/IWillMount
     (will-mount [_]
-      (let [flow (om/get-state owner :flow)]
+      (println "WILL MOUNT OK")
+      (let [flow  (om/get-state owner :flow)]
         (go (loop []
-              (let [flow-state (<! flow)]
-
+              (let [[flow-state in-chan]  (<! flow)]
+                (om/set-state! owner :in-chan in-chan)
                 (println (str "type::: "(keyword? flow-state)))
                                         ;                (om/transact! app :flow-state (fn [_] flow-state))
                 (om/set-state! owner :stock flow-state)
@@ -73,16 +85,15 @@
 
     om/IRenderState
     (render-state [this state]
-     ; (println "reading" (:flow-state app))
-
-      (let [flow-state (:stock state)]
+      (println "RENDER-STATE")
+      (let [flow-state  (:stock state)]
         (dom/div #js {:id "content" :style #js {  :width "100%" }}
                  (om/build menu app {:init-state state} )
                                         ;
                  (if (keyword? flow-state)
                    (condp = flow-state
                      :welcome (dom/h2 nil (str "Welcome!! " (:flow-state app)))
-                     :connection (om/build conns/connections app {:init-state state} )
+                     :connection (om/build conns/connections app {:init-state (assoc  state :in-chan (om/get-state owner :in-chan))} )
                      :endpoints (om/build eps/epss app {:init-state state})
                      :tenants (om/build tenants/tenants app )
                      :service (do (dom/div #js {:id "service" :style #js {  :width "100%" }}
@@ -116,3 +127,16 @@
 (defn testing [state]
   (swap! app-state assoc :flow-state state)
   )
+
+(defn go-to-sequence [section subsection]
+  (go
+    (>! content-chan [ section content-in-chan])
+    (>! content-in-chan subsection))
+  )
+
+(do(go-to-sequence :connection :tenant)
+   (go-to-sequence :connection :base)
+   (go-to-sequence :connection :tenant)
+   (go-to-sequence :connection :base)
+;   (go-to-sequence :connection :tenant)
+   )
