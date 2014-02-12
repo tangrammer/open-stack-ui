@@ -1,6 +1,7 @@
 (ns heroku.connections
   (:require-macros [cljs.core.async.macros :refer [go]])
   (:require
+   [heroku.login :as login]
    [heroku.util :as util]
    [heroku.nav :as nav]
    [heroku.tenants :as tenants]
@@ -11,11 +12,6 @@
    [clojure.browser.repl]
    [cljs.core.async :refer [put! chan <!]])
   )
-
-(def username "facebook1428467850")
-(def password "3a34gc72")
-(def url "http://8.21.28.222:5000")
-
 
 (defn get-value [owner ref]
   (let [input (om/get-node owner ref)]
@@ -85,16 +81,16 @@
                 (dom/h2 #js {:className "form-signin-heading"} "Try a connection")
                 (dom/label nil "Local VM http://192.168.56.102:5000")
                 (dom/label nil  "Public local VM http://85.136.130.89:5000")
-                (dom/label nil (str "trystack:  " url))
-                (dom/input #js {:ref "url" :defaultValue url :type "text" :className "form-control" :placeholder "Connection Url" :required true :autoFocus true } )
+                (dom/label nil (str "trystack:  " login/url))
+                (dom/input #js {:ref "url" :defaultValue login/url :type "text" :className "form-control" :placeholder "Connection Url" :required true :autoFocus true } )
 
                 (dom/label nil (str "Public and local VM: admin/demo"))
-                (dom/label nil (str "trystack:"  username))
+                (dom/label nil (str "trystack:"  login/username))
 
-                (dom/input #js {:ref "username" :defaultValue username :type "text" :className "form-control" :placeholder "User Name" :required true } )
+                (dom/input #js {:ref "username" :defaultValue login/username :type "text" :className "form-control" :placeholder "User Name" :required true } )
                 (dom/label nil (str "Public and local VM: password"))
-                (dom/label nil (str "trystack:"  password))
-                (dom/input #js {:ref "password" :defaultValue password :type "password" :className "form-control" :placeholder "Password" :required true }  )
+                (dom/label nil (str "trystack:"  login/password))
+                (dom/input #js {:ref "password" :defaultValue login/password :type "password" :className "form-control" :placeholder "Password" :required true }  )
                 (dom/button #js {:className "btn btn-lg btn-primary btn-block" :type "button"
                                  :onClick #(connect-base own-chan
                                                          (get-value owner "url")
@@ -121,27 +117,51 @@
 
 (defn tenant [data owner]
   (reify
+     om/IInitState
+    (init-state [_]
+      (println "init-STATE base")
+      {
+       :own-chan (chan)
+       :next-chan (chan)})
+
+    om/IWillMount
+    (will-mount [_]
+      (println "will mount  OK base")
+      (go (loop []
+            (let [data-readed (<! (om/get-state owner :own-chan))]
+              (om/update! data  merge data-readed)
+              (put! (om/get-state owner :flow) [ :endpoints (om/get-state owner :next-chan)])
+              (println "lo conseguiste pisha!")
+              (recur))))
+      )
+    om/IDidUpdate
+    (did-update [_ _ _ _]
+      (println "DID UPDATE OK base")
+;      (put!  "UPDATE OK *******************************")
+      (put! (om/get-state owner :in-chan) [(om/get-state owner :own-chan) (om/get-state owner :next-chan)])
+      )
+
     om/IRenderState
-    (render-state [this {:keys [try-to-connect]}]
+    (render-state [this {:keys [own-chan ]}]
       (dom/form #js {:className "form-signin" :role "form" }
                 (dom/h2 #js {:className "form-signin-heading"} "Connect to Tenant")
-                (dom/label nil "Local VM http://192.168.56.102:5000")
+                (dom/label nil "Local VM http://192.168.56.11:5000")
                 (dom/label nil  "Public local VM http://85.136.130.89:5000")
-                (dom/label nil (str "trystack:  " url))
+                (dom/label nil (str "trystack:  " login/url))
 
-                (dom/input #js {:ref "url" :defaultValue url :type "url" :className "form-control" :placeholder "Connection Url" :required true :autoFocus true } )
+                (dom/input #js {:ref "url" :defaultValue login/url :type "url" :className "form-control" :placeholder "Connection Url" :required true :autoFocus true } )
                 (dom/label nil (str "Public and local VM: admin/demo"))
-                (dom/label nil (str "trystack:"  username))
-                (dom/input #js {:ref "username" :defaultValue username :type "text" :className "form-control" :placeholder "User Name" :required true } )
+                (dom/label nil (str "trystack:"  login/username))
+                (dom/input #js {:ref "username" :defaultValue login/username :type "text" :className "form-control" :placeholder "User Name" :required true } )
 
                 (dom/label nil (str "Public and local VM: password"))
-                (dom/label nil (str "trystack:"  password))
-                (dom/input #js {:ref "password" :defaultValue password :type "password" :className "form-control" :placeholder "Password" :required true }  )
+                (dom/label nil (str "trystack:"  login/password))
+                (dom/input #js {:ref "password" :defaultValue login/password :type "password" :className "form-control" :placeholder "Password" :required true }  )
                 (dom/label nil (str "Public and local VM: admin/demo"))
-                (dom/label nil (str "trystack:"  username))
+                (dom/label nil (str "trystack:"  login/username))
 
-                (dom/input #js {:ref "tenant" :defaultValue username :type "text" :className "form-control" :placeholder "Tenant name" :required true }  )
-                (dom/button #js {:className "btn btn-lg btn-primary btn-block" :type "button" :onClick #(connect-tennant try-to-connect
+                (dom/input #js {:ref "tenant" :defaultValue login/username :type "text" :className "form-control" :placeholder "Tenant name" :required true }  )
+                (dom/button #js {:className "btn btn-lg btn-primary btn-block" :type "button" :onClick #(connect-tennant own-chan
                                                                                                                          (get-value owner "url")
                                                                                                                          (get-value owner "username")
                                                                                                                          (get-value owner "password")

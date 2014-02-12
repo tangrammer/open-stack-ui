@@ -5,8 +5,8 @@
                              {:url "/flavors" :id :flavors}
                              {:url "/servers" :id :servers}
 ]
-                      :quantum [{:url "/networks" :id :networks}
-                                {:url "/subnets" :id :subnets}
+                      :neutron [{:url "/v2.0/networks" :id :networks}
+                                {:url "/v2.0/subnets" :id :subnets}
 ]})
 
 (defn structured-endpoints [data]

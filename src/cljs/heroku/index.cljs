@@ -23,13 +23,14 @@
   (reify
     om/IInitState
     (init-state [_]
-      {:selection (chan)})
+      {:selection (chan)
+       :next-chan (chan)})
     om/IWillMount
     (will-mount [_]
       (let [selection (om/get-state owner :selection) flow (om/get-state owner :flow)]
         (go (loop []
               (let [selection-type (<! selection)]
-                (put! flow selection-type)
+                (put! flow [selection-type (om/get-state owner :next-chan)])
                 (recur))))))
     om/IRenderState
     (render-state  [this {:keys [selection]}]
@@ -95,12 +96,13 @@
                    (condp = flow-state
                      :welcome (dom/h2 nil (str "Welcome!! " (:flow-state app)))
                      :connection (om/build conns/connections app {:init-state state} )
-                     :endpoints (om/build eps/epss app {:init-state state})
+                     :endpoints (om/build eps/epss app {:init-state state })
                      :tenants (om/build tenants/tenants app )
                      :service (do (dom/div #js {:id "service" :style #js {  :width "100%" }}
                                            (dom/h2 nil (str "service call!: " (:model app)))
+
                                            (dom/button #js {:className "btn  btn-primary " :type "button"
-                                                            :onClick #(put! (om/get-state owner :flow) :endpoints)} "endpoints again!")
+                                                            :onClick #(put! (om/get-state owner :flow) [ :endpoints (om/get-state owner :in-chan)])} "endpoints again!")
                                            (dom/pre nil (dom/code nil (JSON/stringify (clj->js ((:model app) app)) nil 2)))))
                      (js/alert (str  "else" flow-state))
                      )
@@ -139,19 +141,12 @@
       (println "hereee++++++++++++++++++++++++++++++++++++++++")
       (>! in-chan subsection)
       (<! next)
-      )
-
-    )
-  )
+      )))
 (defn go-to-tenants-after-base-connection [section subsection tenants]
-
-
-(go   (let [[in-c n-c] (<! (go-to-sequence section subsection))]
-     (println "inside++++++++++++++++++++++++++++++++++++++++")
-     (>! in-c  {:token-id "eyyy" :tenants tenants})
-     ))
-
-  )
+  (go (let [[in-chan next-chan] (<! (go-to-sequence section subsection))]
+        (println "inside++++++++++++++++++++++++++++++++++++++++")
+        (>! in-chan  {:token-id "eyyy" :tenants tenants})
+        (<! next-chan))))
 
 (comment (go-to-tenants-after-base-connection :connection :base mocks/tenants))
 

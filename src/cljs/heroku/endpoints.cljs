@@ -30,18 +30,22 @@
 
 (defn eps [tenant owner]
   (reify
+      om/IInitState
+    (init-state [_]
+      {})
 
     om/IRenderState
-    (render-state [this  {:keys [try-to-call app]}]
+    (render-state [this  {:keys [own-chan token-id]}]
+      (println (str "tokennnnnn: " token-id))
       (apply dom/li #js {:className "list-group-item" } (:name tenant)
              (map
               (fn [av]
                 (dom/button #js {
                                  :onClick #(do
                                              ;(.dir js/console owner)
-                                             (service-call (om/get-state owner :try-to-call)
+                                             (service-call own-chan
                                                            (:id av)
-                                                           (:token-id @app)
+                                                            token-id
                                                            (:publicURL @tenant) (:url av))
                                              )
                                  :className "btn btn-primary btn-xs"} (:url av)) )
@@ -56,15 +60,23 @@
   (reify
       om/IInitState
     (init-state [_]
-      {:try-to-call (chan)})
+      {:own-chan (chan)
+       :next-chan (chan)})
+        om/IDidUpdate
+    (did-update [_ _ _ _]
+      (println "DID UPDATE OK epss")
+      (println (str "DID UPDATE OK TOOOOOOOOOOOOOOOOOO" (om/get-state owner :token-id)))
+      (put! (om/get-state owner :in-chan) [(om/get-state owner :own-chan) (om/get-state owner :next-chan)])
+      )
+
       om/IWillMount
     (will-mount [_]
-      (let [try-to-call (om/get-state owner :try-to-call)
+      (let [try-to-call (om/get-state owner :own-chan)
             flow (om/get-state owner :flow)]
         (go (loop []
               (let [data-readed (<! try-to-call)]
                 (om/update! app merge data-readed)
-                (put! flow :service)
+                (put! flow [:service (om/get-state owner :next-chan)])
                 (recur))))))
     om/IRenderState
     (render-state [this state]
@@ -72,4 +84,4 @@
                (dom/div #js {:className "col-md-6 col-md-offset-3"}
                         (dom/h2 #js {:style {:padding-left "100px"}} "endpoints list")
                         (apply dom/ul #js {:className "list-group"}
-                               (om/build-all eps  (vals (:endpoints app)) {:init-state (assoc state :app app)})))))))
+                               (om/build-all eps  (vals (:endpoints app)) {:init-state {:token-id (:token-id app)} :state state})))))))
