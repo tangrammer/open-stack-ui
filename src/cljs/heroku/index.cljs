@@ -11,11 +11,13 @@
    [om.core :as om :include-macros true]
    [om.dom :as dom :include-macros true]
    [clojure.browser.repl]
-   [cljs.core.async :refer [put! chan <! >!]])
+   [cljs.core.async :refer [put! chan <! >! sliding-buffer]])
   )
+
 
 (enable-console-print!)
 
+(declare shared)
 (defn dir [o]
   (.dir js/console o))
 
@@ -54,7 +56,7 @@
                ))))
 
 (def content-chan (chan))
-(def content-in-chan (chan))
+
 
 (defn content [app owner]
   (reify
@@ -63,15 +65,16 @@
       (println "INIT STATE content")
       {:flow  content-chan
        :stock :welcome
-       :in-chan content-in-chan})
+       :next-chan (chan (sliding-buffer 1))
+       })
     om/IDidMount
     (did-mount [_  _]
       (println "DID MOUNT OK content")
       )
     om/IDidUpdate
     (did-update [_ _ _ _]
-      (println "DID UPDATE OK content")
-                                        ;      (put!  "UPDATE OK *******************************")
+      (println (str "DID UPDATE OK content" (om/get-state owner :in-chan)))
+      (put! (om/get-state owner :in-chan) [(om/get-state owner :flow) (om/get-state owner :next-chan)])                                        ;      (put!  "UPDATE OK *******************************")
       )
     om/IWillMount
     (will-mount [_]
@@ -95,8 +98,11 @@
                  (if (keyword? flow-state)
                    (condp = flow-state
                      :welcome (dom/h2 nil (str "Welcome!! " (:flow-state app)))
-                     :connection (om/build conns/connections app {:init-state state} )
-                     :endpoints (om/build eps/epss app {:init-state state })
+                     :connection (do
+                                   (dom/h2 nil (str "connection!!! " (om/get-state owner :next-chan)))
+                                   (om/build conns/connections app {:init-state {:in-chan (om/get-state owner :next-chan) :flow (om/get-state owner :flow)}} )
+                                   )
+                     :endpoints (om/build eps/epss app )
                      :tenants (om/build tenants/tenants app )
                      :service (do (dom/div #js {:id "service" :style #js {  :width "100%" }}
                                            (dom/h2 nil (str "service call!: " (:model app)))
@@ -115,29 +121,48 @@
 (defn container [app owner]
   (reify
     om/IRender
-    (render [this]
+    (render [this ]
       (dom/div #js {:id "container" :style #js {:width "1200px" }}
                                         ;(dom/h2 nil "Container")
 
 
-               (om/build content app )
+               (om/build content app {:init-state {:in-chan (:next-chan shared)}})
                ))))
 (def app-state (atom {:title "the app tittle" :menu "the menu" :flow-state :welcome}))
 
 
-(om/root app-state container (. js/document (getElementById "my-app")))
 
+(def shared {:next-chan (chan (sliding-buffer 1))})
+(om/root app-state  container (. js/document (getElementById "my-app")))
+
+
+
+;;;;;;;;;;;;;;;;; TESTING ;;;;;;;;;;;;;;
 (defn testing [state]
   (swap! app-state assoc :flow-state state)
   )
 
 
+(defn to-out-channel [in model]
+  (go (let [[out next] (<! in)]
+        (>! out  model)
+        (<! next)))
+  )
+
+(defn inject [in model]
+  (to-out-channel in model))
+
+
+(defn start [ in model]
+ ;       (put! (om/get-state owner :in-chan) [(om/get-state owner :connection) (om/get-state owner :next-chan)])
+  ;(go  (<! (:init-chan shared)[in ]))
+  )
+
 (defn go-to-sequence [section subsection]
 
   (go
-
-    (>! content-chan [ section content-in-chan])
-    (let [[in-chan next] (<! content-in-chan )]
+    (>! content-chan [ section (:in-chan shared)])
+    (let [[in-chan next] (<! (:in-chan shared))]
       (println "hereee++++++++++++++++++++++++++++++++++++++++")
       (>! in-chan subsection)
       (<! next)
@@ -150,7 +175,58 @@
 
 (comment (go-to-tenants-after-base-connection :connection :base mocks/tenants))
 
+
+(defn go-to-tenants [in tenants]
+  (to-out-channel in {:token-id "eyyy" :tenants tenants})
+)
+
+
+
+
 (comment
+  (go
+    (>! content-chan [ :welcome (:next-chan shared)])
+
+
+    )
+
+  (go
+
+    (>! content-chan [ :connection (:next-chan shared)])
+    (let [[ v n] (<! (:next-chan shared))]
+      (>! v [ :connection n])
+      (let [[ a {:keys [tenant]}] (<! n)]
+        (>! a :tenant)
+        (let [[c d ] (<! tenant)]
+          (>! c {:endpoints mocks/eps :token-id "xxxxxxxx"})
+
+
+          )
+
+        )
+      )
+    )
+
+  (go
+
+    (>! content-chan [ :welcome (:next-chan shared)])
+    (let [[ v n] (<! (:next-chan shared))]
+      (>! v [ :connection n])
+      (let [[ a {:keys [base]}] (<! n)]
+        (>! a :base)
+        (let [[c d ] (<! base)]
+          (>! c {:token-id "xxxxxxxx" :tenants mocks/tenants})
+          )
+
+        )
+      )
+    )
+
+  (let [connection-base (go-to-sequence :connection :base)]
+    (to-out-channel connection-base {:token-id "xxxxxxxx" :tenants mocks/tenants})
+    )
+  (-> (go-to-sequence :connection :base)
+      (inject {:token-id "xxxxxxxx" :tenants mocks/tenants}))
   (do
 
    (go-to-sequence :connection :tenant)

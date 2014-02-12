@@ -10,7 +10,7 @@
    [om.core :as om :include-macros true]
    [om.dom :as dom :include-macros true]
    [clojure.browser.repl]
-   [cljs.core.async :refer [put! chan <!]])
+   [cljs.core.async :refer [put! chan <! sliding-buffer] ])
   )
 
 (defn get-value [owner ref]
@@ -131,7 +131,7 @@
             (let [data-readed (<! (om/get-state owner :own-chan))]
               (om/update! data  merge data-readed)
               (put! (om/get-state owner :flow) [ :endpoints (om/get-state owner :next-chan)])
-              (println "lo conseguiste pisha!")
+              (println (str "lo conseguiste pisha!" data-readed))
               (recur))))
       )
     om/IDidUpdate
@@ -177,7 +177,8 @@
       {
        :connection (chan)
        :connection-type :base
-       :next-chan (chan)})
+       :next-chan-base (chan)
+       :next-chan-tenant (chan)})
 
     om/IWillMount
     (will-mount [this]
@@ -195,34 +196,29 @@
 )
     om/IDidUpdate
     (did-update [_ _ _ _]
-      (println "DID UPDATE OK content")
+      (println (str "******************** DID UPDATE OK content" (om/get-state owner :in-chan) "-----") )
 ;      (put!  "UPDATE OK *******************************")
-      (put! (om/get-state owner :in-chan) [(om/get-state owner :connection) (om/get-state owner :next-chan)])
+                                        ;
+
+      (put! (om/get-state owner :in-chan) [(om/get-state owner :connection) {:base  (om/get-state owner :next-chan-base) :tenant (om/get-state owner :next-chan-tenant)}])
       )
 
 
     om/IRenderState
     (render-state [this state]
-      (println "render state connections")
-      (println "reading" (om/get-state owner :connection-type))
+      (println (str "render state connections" (om/get-state owner :in-chan)))
+      (println (str "reading" (om/get-state owner :connection-type)))
       (let [connection-type (om/get-state owner :connection-type)]
         (dom/div #js {:id "connections" :style #js {:float "left"  :width "800px"}}
 
                                         ;(dom/h2 nil (str "Content DIV" connection-type))
-                 (dom/h3 nil (om/get-state owner :hola))
+                 (dom/h3 nil "CONNECTION AREA")
                  (om/build nav/navbar app {:init-state state} )
                  (if (= connection-type :base)
-                   (om/build base app {:init-state (assoc state :in-chan (om/get-state owner :next-chan))} )
-                   (om/build tenant app {:init-state (let [c (chan)
-                                                           flow (om/get-state owner :flow)]
-
-                                                       (go (loop []
-                                                             (let [data-readed (<! c)]
-                                                               (om/update! app merge data-readed)
-                                                               (put! flow :endpoints)
-                                                               (recur))))
-
-                                                       (assoc state :try-to-connect c))} )
+                   (om/build base app {:init-state (assoc state :in-chan (om/get-state owner :next-chan-base))} )
+                   (om/build tenant app {:init-state
+                                          (assoc state  :in-chan (om/get-state owner :next-chan-tenant))
+                                         } )
                    )
                  ))
       )))
