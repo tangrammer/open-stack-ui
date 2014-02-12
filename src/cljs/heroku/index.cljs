@@ -59,25 +59,26 @@
   (reify
     om/IInitState
     (init-state [_]
-      (println "INIT STATE")
+      (println "INIT STATE content")
       {:flow  content-chan
-       :stock :welcome})
+       :stock :welcome
+       :in-chan content-in-chan})
 om/IDidMount
     (did-mount [_  _]
-      (println "DID MOUNT OK")
+      (println "DID MOUNT OK content")
       )
     om/IDidUpdate
     (did-update [_ _ _ _]
-      (println "DID UPDATE OK")
+      (println "DID UPDATE OK content")
 ;      (put!  "UPDATE OK *******************************")
       )
     om/IWillMount
     (will-mount [_]
-      (println "WILL MOUNT OK")
+      (println "WILL MOUNT OK content")
       (let [flow  (om/get-state owner :flow)]
         (go (loop []
               (let [[flow-state in-chan]  (<! flow)]
-                (om/set-state! owner :in-chan in-chan)
+
                 (println (str "type::: "(keyword? flow-state)))
                                         ;                (om/transact! app :flow-state (fn [_] flow-state))
                 (om/set-state! owner :stock flow-state)
@@ -85,7 +86,7 @@ om/IDidMount
 
     om/IRenderState
     (render-state [this state]
-      (println "RENDER-STATE")
+      (println "RENDER-STATE content")
       (let [flow-state  (:stock state)]
         (dom/div #js {:id "content" :style #js {  :width "100%" }}
                  (om/build menu app {:init-state state} )
@@ -93,7 +94,7 @@ om/IDidMount
                  (if (keyword? flow-state)
                    (condp = flow-state
                      :welcome (dom/h2 nil (str "Welcome!! " (:flow-state app)))
-                     :connection (om/build conns/connections app {:init-state (assoc  state :in-chan (om/get-state owner :in-chan))} )
+                     :connection (om/build conns/connections app {:init-state state} )
                      :endpoints (om/build eps/epss app {:init-state state})
                      :tenants (om/build tenants/tenants app )
                      :service (do (dom/div #js {:id "service" :style #js {  :width "100%" }}
@@ -121,22 +122,29 @@ om/IDidMount
                ))))
 (def app-state (atom {:title "the app tittle" :menu "the menu" :flow-state :welcome}))
 
-(om/root app-state container (. js/document (getElementById "my-app")))
 
+  (om/root app-state container (. js/document (getElementById "my-app")))
 
 (defn testing [state]
   (swap! app-state assoc :flow-state state)
   )
 
+
 (defn go-to-sequence [section subsection]
+
   (go
+
     (>! content-chan [ section content-in-chan])
-    (>! content-in-chan subsection))
+    (let [[in-chan next] (<! content-in-chan )]
+      (println "hereee++++++++++++++++++++++++++++++++++++++++")
+      (>! in-chan subsection)))
   )
 
-(do(go-to-sequence :connection :tenant)
+(do
+
+  (go-to-sequence :connection :tenant)
    (go-to-sequence :connection :base)
    (go-to-sequence :connection :tenant)
    (go-to-sequence :connection :base)
-;   (go-to-sequence :connection :tenant)
+   (go-to-sequence :connection :tenant)
    )

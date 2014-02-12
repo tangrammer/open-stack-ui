@@ -130,21 +130,38 @@
   (reify
     om/IInitState
     (init-state [_]
+      (println "init-STATE connections")
       {
+       :connection (chan)
        :connection-type :base})
 
     om/IWillMount
     (will-mount [this]
-      (om/set-state! owner :connection  (om/get-state owner :in-chan))
+      (println "will mount connections")
+                                        ;(om/set-state! owner :connection  (om/get-state owner :in-chan))
+
       (om/set-state! owner :hola "hola" )
       (let [connection (om/get-state owner :connection)]
+
         (go (loop []
               (let [connection-type (<! connection)]
                 (om/set-state!  owner :connection-type connection-type)
                 (recur))))))
+    om/IDidMount
+    (did-mount [this node]
+      (println "did mount connections")
+)
+    om/IDidUpdate
+    (did-update [_ _ _ _]
+      (println "DID UPDATE OK content")
+;      (put!  "UPDATE OK *******************************")
+      (put! (om/get-state owner :in-chan) [(om/get-state owner :connection) (chan)])
+      )
+
 
     om/IRenderState
     (render-state [this state]
+      (println "render state connections")
       (println "reading" (om/get-state owner :connection-type))
       (let [connection-type (om/get-state owner :connection-type)]
         (dom/div #js {:id "connections" :style #js {:float "left"  :width "800px"}}
