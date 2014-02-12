@@ -54,9 +54,32 @@
 (defn base [data owner]
   (reify
 
+     om/IInitState
+    (init-state [_]
+      (println "init-STATE base")
+      {
+       :own-chan (chan)
+       :next-chan (chan)})
+
+    om/IWillMount
+    (will-mount [_]
+      (println "will mount  OK base")
+      (go (loop []
+            (let [data-readed (<! (om/get-state owner :own-chan))]
+              (om/update! data  merge data-readed)
+              (put! (om/get-state owner :flow) [ (fn [app ](om/build tenants/tenants app )) (om/get-state owner :next-chan)])
+              (println "lo conseguiste pisha!")
+              (recur))))
+      )
+    om/IDidUpdate
+    (did-update [_ _ _ _]
+      (println "DID UPDATE OK base")
+;      (put!  "UPDATE OK *******************************")
+      (put! (om/get-state owner :in-chan) [(om/get-state owner :own-chan) (om/get-state owner :next-chan)])
+      )
 
     om/IRenderState
-    (render-state [this {:keys [try-to-connect flow]}]
+    (render-state [this {:keys [own-chan flow]}]
       (dom/form #js {:className "form-signin" :role "form" }
 
                 (dom/h2 #js {:className "form-signin-heading"} "Try a connection")
@@ -73,7 +96,7 @@
                 (dom/label nil (str "trystack:"  password))
                 (dom/input #js {:ref "password" :defaultValue password :type "password" :className "form-control" :placeholder "Password" :required true }  )
                 (dom/button #js {:className "btn btn-lg btn-primary btn-block" :type "button"
-                                 :onClick #(connect-base try-to-connect
+                                 :onClick #(connect-base own-chan
                                                          (get-value owner "url")
                                                          (get-value owner "username")
                                                          (get-value owner "password") )} "Connect!")
@@ -133,16 +156,15 @@
       (println "init-STATE connections")
       {
        :connection (chan)
-       :connection-type :base})
+       :connection-type :base
+       :next-chan (chan)})
 
     om/IWillMount
     (will-mount [this]
       (println "will mount connections")
                                         ;(om/set-state! owner :connection  (om/get-state owner :in-chan))
-
       (om/set-state! owner :hola "hola" )
       (let [connection (om/get-state owner :connection)]
-
         (go (loop []
               (let [connection-type (<! connection)]
                 (om/set-state!  owner :connection-type connection-type)
@@ -155,7 +177,7 @@
     (did-update [_ _ _ _]
       (println "DID UPDATE OK content")
 ;      (put!  "UPDATE OK *******************************")
-      (put! (om/get-state owner :in-chan) [(om/get-state owner :connection) (chan)])
+      (put! (om/get-state owner :in-chan) [(om/get-state owner :connection) (om/get-state owner :next-chan)])
       )
 
 
@@ -170,17 +192,7 @@
                  (dom/h3 nil (om/get-state owner :hola))
                  (om/build nav/navbar app {:init-state state} )
                  (if (= connection-type :base)
-                   (om/build base app {:init-state (let [c (chan)
-                                                         flow (om/get-state owner :flow)]
-
-                                                     (go (loop []
-                                                           (let [data-readed (<! c)]
-                                                             (om/update! app merge data-readed)
-                                        ;                                                             (put! flow :tenants)
-                                                             (put! flow (fn [app ](om/build tenants/tenants app )))
-                                                             (recur))))
-
-                                                     (assoc state :try-to-connect c))} )
+                   (om/build base app {:init-state (assoc state :in-chan (om/get-state owner :next-chan))} )
                    (om/build tenant app {:init-state (let [c (chan)
                                                            flow (om/get-state owner :flow)]
 

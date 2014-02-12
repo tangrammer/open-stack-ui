@@ -1,7 +1,7 @@
 (ns heroku.index
   (:require-macros [cljs.core.async.macros :refer [go]])
   (:require
-
+   [heroku.mocks :as mocks]
    [heroku.util :as util]
    [heroku.nav :as nav]
    [heroku.endpoints :as eps]
@@ -63,14 +63,14 @@
       {:flow  content-chan
        :stock :welcome
        :in-chan content-in-chan})
-om/IDidMount
+    om/IDidMount
     (did-mount [_  _]
       (println "DID MOUNT OK content")
       )
     om/IDidUpdate
     (did-update [_ _ _ _]
       (println "DID UPDATE OK content")
-;      (put!  "UPDATE OK *******************************")
+                                        ;      (put!  "UPDATE OK *******************************")
       )
     om/IWillMount
     (will-mount [_]
@@ -123,7 +123,7 @@ om/IDidMount
 (def app-state (atom {:title "the app tittle" :menu "the menu" :flow-state :welcome}))
 
 
-  (om/root app-state container (. js/document (getElementById "my-app")))
+(om/root app-state container (. js/document (getElementById "my-app")))
 
 (defn testing [state]
   (swap! app-state assoc :flow-state state)
@@ -137,14 +137,30 @@ om/IDidMount
     (>! content-chan [ section content-in-chan])
     (let [[in-chan next] (<! content-in-chan )]
       (println "hereee++++++++++++++++++++++++++++++++++++++++")
-      (>! in-chan subsection)))
+      (>! in-chan subsection)
+      (<! next)
+      )
+
+    )
+  )
+(defn go-to-tenants-after-base-connection [section subsection tenants]
+
+
+(go   (let [[in-c n-c] (<! (go-to-sequence section subsection))]
+     (println "inside++++++++++++++++++++++++++++++++++++++++")
+     (>! in-c  {:token-id "eyyy" :tenants tenants})
+     ))
+
   )
 
-(do
+(comment (go-to-tenants-after-base-connection :connection :base mocks/tenants))
 
-  (go-to-sequence :connection :tenant)
-   (go-to-sequence :connection :base)
+(comment
+  (do
+
    (go-to-sequence :connection :tenant)
    (go-to-sequence :connection :base)
    (go-to-sequence :connection :tenant)
-   )
+   (go-to-sequence :connection :base)
+   (go-to-sequence :connection :tenant)
+   ))
