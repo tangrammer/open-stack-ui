@@ -190,6 +190,30 @@
 
     )
 
+  (put! content-chan :welcome)
+  (go
+    (println "init ")
+    (>! content-chan :connection)
+    (println "exit 0 ")
+      (let [[ v n] (<!  shared-chan)]
+        (println "exit 1")
+        (let [[ a {:keys [tenant]}] (<! n)]
+          (println "exit 2")
+          (>! a :tenant)
+          (println "exit 3")
+          (let [[c d ] (<! tenant)]
+            (println "exit 4")
+            (>! c {:endpoints mocks/eps :token-id "xxxxxxxx"})
+            (println "exit 5")
+
+            )
+
+
+
+
+          )
+        )
+      )
 
   (go
     (println "init ")

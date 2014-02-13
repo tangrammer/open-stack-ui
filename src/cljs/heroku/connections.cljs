@@ -121,12 +121,11 @@
        :next-chan (chan (dropping-buffer 1)) })
     om/IWillMount
     (will-mount [_]
-
       (go (loop []
-            (>! (om/get-state owner :in-chan) [(om/get-state owner :own-chan) (om/get-state owner :next-chan)])
+            (put! (om/get-state owner :in-chan) [(om/get-state owner :own-chan) (om/get-state owner :next-chan)])
             (let [data-readed (<! (om/get-state owner :own-chan))]
               (om/update! data  merge data-readed)
-              (>! (om/get-state owner :flow) [ :endpoints (om/get-state owner :next-chan)])
+              (>! (om/get-state owner :flow)  :endpoints )
 
               (recur))))
       )
@@ -180,10 +179,11 @@
                                         ;(om/set-state! owner :connection  (om/get-state owner :in-chan))
       (let [connection (om/get-state owner :own-chan)]
         (go (loop []
-              (>! (om/get-state owner :in-chan) [(om/get-state owner :own-chan) {:base  (om/get-state owner :next-chan-base) :tenant (om/get-state owner :next-chan-tenant)}])
+              (put! (om/get-state owner :in-chan) [(om/get-state owner :own-chan) {:base  (om/get-state owner :next-chan-base) :tenant (om/get-state owner :next-chan-tenant)}])
               (let [connection-type (<! connection)]
                 (om/set-state!  owner :connection-type connection-type)
-                (println (str "setting value" connection-type))
+                (println (str "mas:::::::::::::::::::"(om/get-state owner :connection-type)))
+                (println (str "************************* setting value" connection-type))
                 (recur))))))
     om/IDidUpdate
     (did-update [_ _ _ _]
@@ -196,18 +196,18 @@
     om/IRenderState
     (render-state [this state]
 
-      (println (om/get-state owner :connection-type))
+      (println (str "******" (om/get-state owner :connection-type)))
+      (println (str "******" (:connection-type state)))
 
-      (let [connection-type (om/get-state owner :connection-type)]
+      (let [connection-type ( :connection-type state)]
         (dom/div #js {:id "connections" :style #js {:float "left"  :width "800px"}}
 
                                         ;(dom/h2 nil (str "Content DIV" connection-type))
-                 (dom/h3 nil "CONNECTION AREA")
+                 (dom/h3 nil (str "CONNECTION AREA" connection-type))
                  (om/build nav/navbar app {:init-state {:connection (om/get-state owner :own-chan)}} )
                  (if (= connection-type :base)
                    (om/build base app {:init-state {:in-chan (om/get-state owner :next-chan-base) :flow (:flow state) }} )
-                   (om/build tenant app {:init-state
-                                         { :in-chan (om/get-state owner :next-chan-tenant) }
+                   (om/build tenant app {:init-state {:in-chan (om/get-state owner :next-chan-tenant):flow (:flow state)  }
                                          } )
                    )
                  ))
