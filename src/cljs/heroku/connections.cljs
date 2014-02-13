@@ -65,12 +65,7 @@
 
               (recur))))
       )
-    om/IDidUpdate
-    (did-update [_ _ _ _]
 
-
-
-      )
     om/IRenderState
     (render-state [this {:keys [own-chan flow]}]
       (dom/form #js {:className "form-signin" :role "form" }
@@ -122,17 +117,14 @@
     om/IWillMount
     (will-mount [_]
       (go (loop []
-            (put! (om/get-state owner :in-chan) [(om/get-state owner :own-chan) (om/get-state owner :next-chan)])
+            (>! (om/get-state owner :in-chan) [(om/get-state owner :own-chan) (om/get-state owner :next-chan)])
             (let [data-readed (<! (om/get-state owner :own-chan))]
               (om/update! data  merge data-readed)
               (>! (om/get-state owner :flow)  :endpoints )
 
               (recur))))
       )
-    om/IDidUpdate
-    (did-update [_ _ _ _]
 
-      )
 
     om/IRenderState
     (render-state [this {:keys [own-chan ]}]
@@ -148,7 +140,7 @@
                 (dom/input #js {:ref "username" :defaultValue login/username :type "text" :className "form-control" :placeholder "User Name" :required true } )
 
                 (dom/label nil (str "Public and local VM: password"))
-                (dom/label nil (str "trystack:"  login/password))
+                (dom/label nil (str "trystack:"  ))
                 (dom/input #js {:ref "password" :defaultValue login/password :type "password" :className "form-control" :placeholder "Password" :required true }  )
                 (dom/label nil (str "Public and local VM: admin/demo"))
                 (dom/label nil (str "trystack:"  login/username))
@@ -179,7 +171,7 @@
                                         ;(om/set-state! owner :connection  (om/get-state owner :in-chan))
       (let [connection (om/get-state owner :own-chan)]
         (go (loop []
-              (put! (om/get-state owner :in-chan) [(om/get-state owner :own-chan) {:base  (om/get-state owner :next-chan-base) :tenant (om/get-state owner :next-chan-tenant)}])
+              (>! (om/get-state owner :in-chan) [(om/get-state owner :own-chan) {:base  (om/get-state owner :next-chan-base) :tenant (om/get-state owner :next-chan-tenant)}])
               (let [connection-type (<! connection)]
                 (om/set-state!  owner :connection-type connection-type)
                 (println (str "mas:::::::::::::::::::"(om/get-state owner :connection-type)))

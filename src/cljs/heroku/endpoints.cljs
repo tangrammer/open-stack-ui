@@ -7,7 +7,7 @@
    [om.core :as om :include-macros true]
    [om.dom :as dom :include-macros true]
    [clojure.browser.repl]
-   [cljs.core.async :refer [put! chan <!]])
+   [cljs.core.async :refer [put! chan <! dropping-buffer >!]])
   )
 
 (defn service-call [channel service-id token-id publicURL url]
@@ -61,22 +61,19 @@
       om/IInitState
     (init-state [_]
       {:own-chan (chan)
-       :next-chan (chan)})
-        om/IDidUpdate
-    (did-update [_ _ _ _]
-      (println "DID UPDATE OK epss")
-      (println (str "DID UPDATE OK TOOOOOOOOOOOOOOOOOO" (om/get-state owner :token-id)))
-      (put! (om/get-state owner :in-chan) [(om/get-state owner :own-chan) (om/get-state owner :next-chan)])
-      )
+       :next-chan (chan (dropping-buffer 1))})
+
+
 
       om/IWillMount
     (will-mount [_]
       (let [try-to-call (om/get-state owner :own-chan)
             flow (om/get-state owner :flow)]
         (go (loop []
+              (>! (om/get-state owner :in-chan) [(om/get-state owner :own-chan) (om/get-state owner :next-chan)])
               (let [data-readed (<! try-to-call)]
                 (om/update! app merge data-readed)
-                (put! flow [:service (om/get-state owner :next-chan)])
+                (put! flow :service )
                 (recur))))))
     om/IRenderState
     (render-state [this state]
