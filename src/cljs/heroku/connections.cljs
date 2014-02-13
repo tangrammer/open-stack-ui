@@ -10,7 +10,7 @@
    [om.core :as om :include-macros true]
    [om.dom :as dom :include-macros true]
    [clojure.browser.repl]
-   [cljs.core.async :refer [put! chan <! sliding-buffer] ])
+   [cljs.core.async :refer [put! chan <! sliding-buffer >! dropping-buffer] ])
   )
 
 (defn get-value [owner ref]
@@ -23,7 +23,7 @@
    "/tenants"
    {:params {:url url :token-id token-id}
     :handler (fn [response]
-               (println response)
+
                (if (:success response)
                  (do
                                         ;(swap! app-state assoc :url url)
@@ -38,7 +38,7 @@
    "/connect"
    {:params {:url url :username username :password password}
     :handler (fn [response]
-               (println response)
+
                (if (:success response)
                  (connect-tenants-list channel url (get-in response [:access :token :id]))
 
@@ -50,30 +50,27 @@
 (defn base [data owner]
   (reify
 
-     om/IInitState
+    om/IInitState
     (init-state [_]
-      (println "init-STATE base")
-      {
-       :own-chan (chan)
-       :next-chan (chan)})
-
+      {:own-chan (chan)
+       :next-chan (chan (dropping-buffer 1))})
     om/IWillMount
     (will-mount [_]
-      (println "will mount  OK base")
+
       (go (loop []
+            (>! (om/get-state owner :in-chan) [(om/get-state owner :own-chan) (om/get-state owner :next-chan)])
             (let [data-readed (<! (om/get-state owner :own-chan))]
               (om/update! data  merge data-readed)
-              (put! (om/get-state owner :flow) [ (fn [app ](om/build tenants/tenants app )) (om/get-state owner :next-chan)])
-              (println "lo conseguiste pisha!")
+              (>! (om/get-state owner :flow) :tenants)
+
               (recur))))
       )
     om/IDidUpdate
     (did-update [_ _ _ _]
-      (println "DID UPDATE OK base")
-;      (put!  "UPDATE OK *******************************")
-      (put! (om/get-state owner :in-chan) [(om/get-state owner :own-chan) (om/get-state owner :next-chan)])
-      )
 
+
+
+      )
     om/IRenderState
     (render-state [this {:keys [own-chan flow]}]
       (dom/form #js {:className "form-signin" :role "form" }
@@ -100,7 +97,7 @@
                 (dom/button #js {:className "btn  btn-inverse  btn-mini" :type "button"
                                  :onClick #(put! flow :welcome)} "Exit!")
                 ))))
-;(put! flow :welcome)
+                                        ;(put! flow :welcome)
 (defn connect-tennant [channel url username password tenant]
   (GET
    "/endpoints"
@@ -117,28 +114,25 @@
 
 (defn tenant [data owner]
   (reify
-     om/IInitState
+    om/IInitState
     (init-state [_]
-      (println "init-STATE base")
       {
        :own-chan (chan)
-       :next-chan (chan)})
-
+       :next-chan (chan (dropping-buffer 1)) })
     om/IWillMount
     (will-mount [_]
-      (println "will mount  OK base")
+
       (go (loop []
+            (>! (om/get-state owner :in-chan) [(om/get-state owner :own-chan) (om/get-state owner :next-chan)])
             (let [data-readed (<! (om/get-state owner :own-chan))]
               (om/update! data  merge data-readed)
-              (put! (om/get-state owner :flow) [ :endpoints (om/get-state owner :next-chan)])
-              (println (str "lo conseguiste pisha!" data-readed))
+              (>! (om/get-state owner :flow) [ :endpoints (om/get-state owner :next-chan)])
+
               (recur))))
       )
     om/IDidUpdate
     (did-update [_ _ _ _]
-      (println "DID UPDATE OK base")
-;      (put!  "UPDATE OK *******************************")
-      (put! (om/get-state owner :in-chan) [(om/get-state owner :own-chan) (om/get-state owner :next-chan)])
+
       )
 
     om/IRenderState
@@ -173,51 +167,47 @@
   (reify
     om/IInitState
     (init-state [_]
-      (println "init-STATE connections")
       {
-       :connection (chan)
+       :own-chan (chan)
        :connection-type :base
-       :next-chan-base (chan)
-       :next-chan-tenant (chan)})
+       :next-chan-base (chan (dropping-buffer 1))
+       :next-chan-tenant (chan (dropping-buffer 1))})
 
     om/IWillMount
     (will-mount [this]
-      (println "will mount connections")
+(println "listening on connections")
+
                                         ;(om/set-state! owner :connection  (om/get-state owner :in-chan))
-      (om/set-state! owner :hola "hola" )
-      (let [connection (om/get-state owner :connection)]
+      (let [connection (om/get-state owner :own-chan)]
         (go (loop []
+              (>! (om/get-state owner :in-chan) [(om/get-state owner :own-chan) {:base  (om/get-state owner :next-chan-base) :tenant (om/get-state owner :next-chan-tenant)}])
               (let [connection-type (<! connection)]
                 (om/set-state!  owner :connection-type connection-type)
+                (println (str "setting value" connection-type))
                 (recur))))))
-    om/IDidMount
-    (did-mount [this node]
-      (println "did mount connections")
-)
     om/IDidUpdate
     (did-update [_ _ _ _]
-      (println (str "******************** DID UPDATE OK content" (om/get-state owner :in-chan) "-----") )
-;      (put!  "UPDATE OK *******************************")
-                                        ;
 
-      (put! (om/get-state owner :in-chan) [(om/get-state owner :connection) {:base  (om/get-state owner :next-chan-base) :tenant (om/get-state owner :next-chan-tenant)}])
+
       )
+
 
 
     om/IRenderState
     (render-state [this state]
-      (println (str "render state connections" (om/get-state owner :in-chan)))
-      (println (str "reading" (om/get-state owner :connection-type)))
+
+      (println (om/get-state owner :connection-type))
+
       (let [connection-type (om/get-state owner :connection-type)]
         (dom/div #js {:id "connections" :style #js {:float "left"  :width "800px"}}
 
                                         ;(dom/h2 nil (str "Content DIV" connection-type))
                  (dom/h3 nil "CONNECTION AREA")
-                 (om/build nav/navbar app {:init-state state} )
+                 (om/build nav/navbar app {:init-state {:connection (om/get-state owner :own-chan)}} )
                  (if (= connection-type :base)
-                   (om/build base app {:init-state (assoc state :in-chan (om/get-state owner :next-chan-base))} )
+                   (om/build base app {:init-state {:in-chan (om/get-state owner :next-chan-base) :flow (:flow state) }} )
                    (om/build tenant app {:init-state
-                                          (assoc state  :in-chan (om/get-state owner :next-chan-tenant))
+                                         { :in-chan (om/get-state owner :next-chan-tenant) }
                                          } )
                    )
                  ))

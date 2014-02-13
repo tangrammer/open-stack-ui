@@ -17,20 +17,21 @@
 
 (defn navbar [data owner]
   (reify
-    om/IRenderState
-    (render-state  [this {:keys [connection]}]
-      (dom/nav #js {:className "navbar navbar-default" :role "navigation"}
-               (dom/div #js {:className "collapse navbar-collapse"}
-                        (dom/ul #js {:className "nav navbar-nav"}
-                                (dom/li #js {:ref "base" :className "active"}
-                                        (dom/a #js {:href "#"
-                                                    :onClick #(do
-                                                                (change-cssclass owner "base" "active")
-                                                                (change-cssclass owner "tenant" "")
-                                                                (put! connection :base))
-                                                    } "Try a connection"))
-                                (dom/li #js {:ref "tenant" :className ""}
-                                        (dom/a #js {:href "#" :onClick #(do
-                                                                (change-cssclass owner "tenant" "active")
-                                                                (change-cssclass owner "base" "")
-                                                                (put! connection :tenant))} "Connect to a Tenant"))))))))
+    om/IRender
+    (render  [this]
+      (let [connection (om/get-state owner :connection)]
+       (dom/nav #js {:className "navbar navbar-default" :role "navigation"}
+                (dom/div #js {:className "collapse navbar-collapse"}
+                         (dom/ul #js {:className "nav navbar-nav"}
+                                 (dom/li #js {:ref "base" :className "active"}
+                                         (dom/a #js {:href "#"
+                                                     :onClick #(do
+                                                                 (change-cssclass owner "base" "active")
+                                                                 (change-cssclass owner "tenant" "")
+                                                                 (put! connection :base))
+                                                     } "Try a connection"))
+                                 (dom/li #js {:ref "tenant" :className ""}
+                                         (dom/a #js {:href "#" :onClick #(do
+                                                                           (change-cssclass owner "tenant" "active")
+                                                                           (change-cssclass owner "base" "")
+                                                                           (put! connection :tenant))} "Connect to a Tenant")))))))))

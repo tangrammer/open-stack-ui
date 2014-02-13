@@ -78,6 +78,26 @@
   (.stop server)
   )
 
+(def r (let [f "foo"]
+         (reify Object
+           (toString [this]
+             f))))
+
+(str r) ; == "foo"
+
+
+(def r-extended (let [f "extended"]
+         (reify Object
+           (toString [this]
+             (str f "-"(str r))))))
+
+
+(str r-extended) ; == "extended-foo"
+
+
+
+
+
 (comment  "to start:
  * cljsbuild once to generate the js
  * brepl evaluate both lines and reload browser
