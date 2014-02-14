@@ -58,7 +58,7 @@
     (will-mount [_]
 
       (go (loop []
-            (>! (om/get-state owner :in-chan) [(om/get-state owner :own-chan) (om/get-state owner :next-chan)])
+            (>! (om/get-state owner :in-chan) [(om/get-state owner :own-chan) {:next (om/get-state owner :next-chan)}])
             (let [data-readed (<! (om/get-state owner :own-chan))]
               (om/update! data  merge data-readed)
               (>! (om/get-state owner :flow) :tenants)
@@ -117,7 +117,7 @@
     om/IWillMount
     (will-mount [_]
       (go (loop []
-            (>! (om/get-state owner :in-chan) [(om/get-state owner :own-chan) (om/get-state owner :next-chan)])
+            (>! (om/get-state owner :in-chan) [(om/get-state owner :own-chan) {:next (om/get-state owner :next-chan)}])
             (let [data-readed (<! (om/get-state owner :own-chan))]
               (om/update! data  merge data-readed)
               (>! (om/get-state owner :flow)  :endpoints )

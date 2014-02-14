@@ -1,5 +1,6 @@
 (ns heroku.index
-  (:require-macros [cljs.core.async.macros :refer [go]])
+  (:require-macros [cljs.core.async.macros :refer [go]]
+                   [heroku.mac :refer [t minimal]])
   (:require
    [heroku.mocks :as mocks]
    [heroku.util :as util]
@@ -153,8 +154,30 @@
 
 
 (comment
+
+
   (go
     (>! content-chan :welcome)
+    (-> (t connection-type-channel :connection :connections)
+        (t :tenant :tenant)
+        (t {:endpoints mocks/eps :token-id "xxxxxxxx"} :next)))
+
+  (go
+    (>! content-chan :welcome)
+    (-> (t connection-type-channel :connection :connections)
+        (t :base :base)
+        (t {:token-id "xxxxxxxx" :tenants mocks/tenants} :next)))
+(println "\n\n\n")
+
+  (go
+    (>! content-chan :welcome)
+
+
+    )
+
+  (go
+    (>! content-chan :welcome)
+
     (let [conns (go (let [[out {:keys [connections]}] (<! connection-type-channel)]
                    (>! out  :connection)
                    (<! connections)))
@@ -167,7 +190,6 @@
       (<! x)
       )
     )
-
 
   (go
     (>! content-chan :welcome)
@@ -184,11 +206,6 @@
       )
     )
 
-
-
-
-
-
   (go
     (println "init ")
     (>! content-chan :connection)
@@ -204,10 +221,6 @@
             (>! c {:endpoints mocks/eps :token-id "xxxxxxxx"})
             (println "exit 5")
             ))))
-
-
-
-
 
   (go
     (println "init ")
