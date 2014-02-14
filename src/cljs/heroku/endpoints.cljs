@@ -83,7 +83,7 @@
                         (dom/h2 #js {:style {:padding-left "100px"}} "endpoints list")
                         (apply dom/ul #js {:className "list-group"}
                                (om/build-all eps  (vals (:endpoints app)) {:init-state {:token-id (:token-id app)
-                                                                                        ;:in-chan (om/get-state owner :next-chan)
+                                                                                        :own-chan (om/get-state owner :own-chan)
                                                                                         } :state state})))))))
 
 

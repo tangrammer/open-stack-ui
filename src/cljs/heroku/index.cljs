@@ -38,7 +38,7 @@
                                            :onClick #(do
                                         ;(change-cssclass owner "base" "active")
                                         ;(change-cssclass owner "tenant" "")
-                                                      (put! (om/get-state owner :flow) :connection))
+                                                       (put! (om/get-state owner :flow) :connection))
                                            } "Connect to a OS Instance"))
                        )
 
@@ -63,7 +63,6 @@
     om/IWillMount
     (will-mount [_]
       (println "WILL MOUNT OK content")
-
       (let [flow  (om/get-state owner :flow)]
         (go (loop []
               (>! (om/get-state owner :in-chan) [(om/get-state owner :flow) {:connections (om/get-state owner :next-chan-connections)
@@ -71,9 +70,8 @@
                                                                              :tenants (om/get-state owner :next-chan-tenants)
                                                                              :services (om/get-state owner :next-chan-services)}])
               (let [flow-state   (<! flow)]
-
                 (println (str "type::: " flow-state))
-                   (om/update! app :flow-state flow-state)
+                (om/update! app :flow-state flow-state)
                 (om/set-state! owner :stock flow-state)
                 (recur))))))
     om/IRenderState
@@ -89,15 +87,15 @@
                      :connection (om/build conns/connections app
                                            {:init-state {:in-chan (om/get-state owner :next-chan-connections) :flow (om/get-state owner :flow)}} )
 
-                     :endpoints (om/build eps/epss app {:state {:in-chan (om/get-state owner :next-chan-eps) :flow (om/get-state owner :flow)}} )
-                     :tenants (om/build tenants/tenants app {:state {:in-chan (om/get-state owner :next-chan-tenants) :flow (om/get-state owner :flow)}} )
+; changed to use                      :endpoints (om/build eps/epss app {:state {:in-chan (om/get-state owner :next-chan-eps) :flow (om/get-state owner :flow)}} )
+;changed to use function                     :tenants (om/build tenants/tenants app {:state {:in-chan (om/get-state owner :next-chan-tenants) :flow (om/get-state owner :flow)}} )
                      :service (do
                                 (dom/div #js {:id "service" :style #js {  :width "100%" }}
-                                           (dom/h2 nil (str "service call!: " (:model app)))
+                                         (dom/h2 nil (str "service call!: " (:model app)))
 
-                                           (dom/button #js {:className "btn  btn-primary " :type "button"
-                                                            :onClick #(put! (om/get-state owner :flow)  :endpoints )} "endpoints again!")
-                                           (dom/pre nil (dom/code nil (JSON/stringify (clj->js ((:model app) app)) nil 2)))))
+                                         (dom/button #js {:className "btn  btn-primary " :type "button"
+                                                          :onClick #(put! (om/get-state owner :flow)  :endpoints )} "endpoints again!")
+                                         (dom/pre nil (dom/code nil (JSON/stringify (clj->js ((:model app) app)) nil 2)))))
                      (js/alert (str  "else" flow-state))
                      )
                                         ;(js/alert "ofu")
@@ -112,19 +110,11 @@
     om/IRender
     (render [this ]
       (dom/div #js {:id "container" :style #js {:width "1200px" }}
-                                        ;(dom/h2 nil "Container")
+               (om/build content app {:init-state {:in-chan shared-chan}})))))
 
-
-               (om/build content app {:init-state {:in-chan shared-chan}})
-               ))))
 (def app-state (atom {:title "the app tittle" :menu "the menu" :flow-state :welcome}))
 
-
-
-
 (om/root container app-state {:target (. js/document (getElementById "my-app"))})
-
-
 
 ;;;;;;;;;;;;;;;;; TESTING ;;;;;;;;;;;;;;
 (defn testing [state]
@@ -139,17 +129,36 @@
   )
 
 (defn inject [in model]
-   (go (let [[out next] (<! in)]
+  (go (let [[out next] (<! in)]
         (>! out  model)
         (<! next)))
-)
+  )
 
-  (def connection-type-channel shared-chan)
-  (defn result-of-inject [value channel]
-    (inject channel value))
+(def connection-type-channel shared-chan)
+(defn result-of-inject [value channel]
+  (inject channel value))
 
 
 (comment
+
+
+  (go
+    (>! content-chan :welcome)
+    (-> (t connection-type-channel :connection :connections)
+        (t :tenant :tenant)
+        (t {:endpoints mocks/eps :token-id "xxxxxxxx"} :next)
+        (close!)
+
+        ))
+
+  (go
+    (>! content-chan :welcome)
+    (-> (t connection-type-channel :connection :connections)
+        (t :tenant :tenant)
+        (t {:endpoints mocks/eps :token-id "xxxxxxxx"} :next)
+        (t {:flavors mocks/flavors :model :flavors} :next)
+        (close!)
+        ))
 
   (go
     (>! content-chan :welcome)
@@ -165,8 +174,9 @@
     (-> (t connection-type-channel :connection :connections)
         (t :base :base)
         (t {:token-id "xxxxxxxx" :tenants mocks/tenants} :next)
-        (close!)))
-(println "\n\n\n")
+        (close!)
+      ))
+  (println "\n\n\n")
 
   (go
     (>! content-chan :welcome)
@@ -178,11 +188,11 @@
     (>! content-chan :welcome)
 
     (let [conns (go (let [[out {:keys [connections]}] (<! connection-type-channel)]
-                   (>! out  :connection)
-                   (<! connections)))
+                      (>! out  :connection)
+                      (<! connections)))
           tenant (go (let [[out {:keys [tenant]}] (<! conns)]
-                   (>! out  :tenant)
-                   (<! tenant)))
+                       (>! out  :tenant)
+                       (<! tenant)))
           x (go (let [[out _] (<! tenant)]
                   (>! out  {:endpoints mocks/eps :token-id "xxxxxxxx"})
                   (<! _)))]
@@ -193,11 +203,11 @@
   (go
     (>! content-chan :welcome)
     (let [conns (go (let [[out {:keys [connections]}] (<! connection-type-channel)]
-                   (>! out  :connection)
-                   (<! connections)))
+                      (>! out  :connection)
+                      (<! connections)))
           base (go (let [[out {:keys [base]}] (<! conns)]
-                   (>! out  :base)
-                   (<! base)))
+                     (>! out  :base)
+                     (<! base)))
           x (go (let [[out _] (<! base)]
                   (>! out {:token-id "xxxxxxxx" :tenants mocks/tenants})
                   (<! _)))]
@@ -210,39 +220,39 @@
     (>! content-chan :connection)
     (println "exit 0 ")
     (let [[ v {:keys [ connections]} ] (<!  shared-chan)]
-        (println "exit 1")
-        (let [[ a {:keys [tenant]}] (<! connections)]
-          (println "exit 2")
-          (>! a :tenant)
-          (println "exit 3")
-          (let [[c d ] (<! tenant)]
-            (println "exit 4")
-            (>! c {:endpoints mocks/eps :token-id "xxxxxxxx"})
-            (println "exit 5")
-            ))))
+      (println "exit 1")
+      (let [[ a {:keys [tenant]}] (<! connections)]
+        (println "exit 2")
+        (>! a :tenant)
+        (println "exit 3")
+        (let [[c d ] (<! tenant)]
+          (println "exit 4")
+          (>! c {:endpoints mocks/eps :token-id "xxxxxxxx"})
+          (println "exit 5")
+          ))))
 
   (go
     (println "init ")
     (>! content-chan :connection)
     (println "exit 0 ")
-      (let [[ v {:keys [ connections]} ] (<!  shared-chan)]
-        (println "exit 1")
-        (let [[ a {:keys [base]}] (<! connections)]
-          (println "exit 2")
-          (>! a :base)
-          (println "exit 3")
-          (let [[c d ] (<! base)]
-            (println "exit 4")
-            (>! c {:token-id "xxxxxxxx" :tenants mocks/tenants})
-            (println "exit 5")
-            )
+    (let [[ v {:keys [ connections]} ] (<!  shared-chan)]
+      (println "exit 1")
+      (let [[ a {:keys [base]}] (<! connections)]
+        (println "exit 2")
+        (>! a :base)
+        (println "exit 3")
+        (let [[c d ] (<! base)]
+          (println "exit 4")
+          (>! c {:token-id "xxxxxxxx" :tenants mocks/tenants})
+          (println "exit 5")
           )
         )
       )
-(println "\n")
+    )
+  (println "\n")
   (put! content-chan :connection)
   (put! content-chan :welcome)
 
 
-)
+  )
 (println "\n\n\n\n\n\n\n\n\n")

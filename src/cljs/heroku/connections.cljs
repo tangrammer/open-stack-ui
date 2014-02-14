@@ -63,8 +63,8 @@
             (let [data-readed (<! (om/get-state owner :own-chan))]
               (om/update! data :tenants (:tenants data-readed))
               (om/update! data :token-id (:token-id data-readed))
-              (>! (om/get-state owner :flow) :tenants)
-
+;              (>! (om/get-state owner :flow) :tenants)
+              (>! (om/get-state owner :flow) (fn [app] (om/build tenants/tenants app {:init-state {:in-chan (om/get-state owner :next-chan) :flow (om/get-state owner :flow)}} )))
               (recur))))
       )
 
