@@ -12,7 +12,7 @@
    [om.core :as om :include-macros true]
    [om.dom :as dom :include-macros true]
    [clojure.browser.repl]
-   [cljs.core.async :refer [put! chan <! >! sliding-buffer dropping-buffer]])
+   [cljs.core.async :refer [put! chan <! >! sliding-buffer dropping-buffer close!]])
   )
 
 
@@ -91,7 +91,7 @@
                    (condp = flow-state
                      :welcome (dom/h2 nil (str "Welcome!! " (:flow-state app)))
                      :connection (om/build conns/connections app
-                                           {:state {:in-chan (om/get-state owner :next-chan-connections) :flow (om/get-state owner :flow)}} )
+                                           {:init-state {:in-chan (om/get-state owner :next-chan-connections) :flow (om/get-state owner :flow)}} )
 
                      :endpoints (om/build eps/epss app {:state {:in-chan (om/get-state owner :next-chan-eps) :flow (om/get-state owner :flow)}} )
                      :tenants (om/build tenants/tenants app {:state {:in-chan (om/get-state owner :next-chan-tenants) :flow (om/get-state owner :flow)}} )
@@ -101,7 +101,7 @@
 
                                            (dom/button #js {:className "btn  btn-primary " :type "button"
                                                             :onClick #(put! (om/get-state owner :flow) [ :endpoints (om/get-state owner :in-chan)])} "endpoints again!")
-                                           (dom/pre nil (dom/code nil (JSON/stringify (clj->js ((:model app) app)) nil 2)))))
+                                           (dom/pre nil (dom/code nil JSON/stringify (clj->js ((:model app) app)) nil 2))))
                      (js/alert (str  "else" flow-state))
                      )
                                         ;(js/alert "ofu")
@@ -126,7 +126,7 @@
 
 
 
-(om/root app-state  container (. js/document (getElementById "my-app")))
+(om/root container app-state {:target (. js/document (getElementById "my-app"))})
 
 
 
@@ -155,12 +155,13 @@
 
 (comment
 
-
   (go
     (>! content-chan :welcome)
     (-> (t connection-type-channel :connection :connections)
         (t :tenant :tenant)
-        (t {:endpoints mocks/eps :token-id "xxxxxxxx"} :next)))
+        (t {:endpoints mocks/eps :token-id "xxxxxxxx"} :next)
+
+        ))
 
   (go
     (>! content-chan :welcome)
