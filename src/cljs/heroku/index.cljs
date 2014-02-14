@@ -58,13 +58,8 @@
        :next-chan-connections (chan (dropping-buffer 1))
        :next-chan-eps (chan (dropping-buffer 1))
        :next-chan-tenants (chan (dropping-buffer 1))
+       :next-chan-services (chan (dropping-buffer 1))
        })
-    om/IDidUpdate
-    (did-update [_ _ _ _]
-      (println "CONTENT  updated")
-;      sliding-buffer
-
-      )
     om/IWillMount
     (will-mount [_]
       (println "WILL MOUNT OK content")
@@ -73,11 +68,12 @@
         (go (loop []
               (>! (om/get-state owner :in-chan) [(om/get-state owner :flow) {:connections (om/get-state owner :next-chan-connections)
                                                                              :eps (om/get-state owner :next-chan-eps)
-                                                                             :tenants (om/get-state owner :next-chan-tenants)}])
+                                                                             :tenants (om/get-state owner :next-chan-tenants)
+                                                                             :services (om/get-state owner :next-chan-services)}])
               (let [flow-state   (<! flow)]
 
                 (println (str "type::: " flow-state))
-                                        ;                (om/transact! app :flow-state (fn [_] flow-state))
+                   (om/update! app :flow-state flow-state)
                 (om/set-state! owner :stock flow-state)
                 (recur))))))
     om/IRenderState
@@ -100,8 +96,8 @@
                                            (dom/h2 nil (str "service call!: " (:model app)))
 
                                            (dom/button #js {:className "btn  btn-primary " :type "button"
-                                                            :onClick #(put! (om/get-state owner :flow) [ :endpoints (om/get-state owner :in-chan)])} "endpoints again!")
-                                           (dom/pre nil (dom/code nil JSON/stringify (clj->js ((:model app) app)) nil 2))))
+                                                            :onClick #(put! (om/get-state owner :flow)  :endpoints )} "endpoints again!")
+                                           (dom/pre nil (dom/code nil (JSON/stringify (clj->js ((:model app) app)) nil 2)))))
                      (js/alert (str  "else" flow-state))
                      )
                                         ;(js/alert "ofu")
@@ -160,14 +156,16 @@
     (-> (t connection-type-channel :connection :connections)
         (t :tenant :tenant)
         (t {:endpoints mocks/eps :token-id "xxxxxxxx"} :next)
-
+        (t {:images mocks/images :model :images } :next)
+        (close!)
         ))
 
   (go
     (>! content-chan :welcome)
     (-> (t connection-type-channel :connection :connections)
         (t :base :base)
-        (t {:token-id "xxxxxxxx" :tenants mocks/tenants} :next)))
+        (t {:token-id "xxxxxxxx" :tenants mocks/tenants} :next)
+        (close!)))
 (println "\n\n\n")
 
   (go
@@ -247,3 +245,4 @@
 
 
 )
+(println "\n\n\n\n\n\n\n\n\n")

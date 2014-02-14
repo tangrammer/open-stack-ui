@@ -4,6 +4,7 @@
    [heroku.login :as login]
    [heroku.util :as util]
    [heroku.nav :as nav]
+   [heroku.endpoints :as eps]
    [heroku.tenants :as tenants]
    [heroku.endpoints :as endpoints]
    [ajax.core :refer [GET POST]]
@@ -60,11 +61,6 @@
       (go (loop []
             (>! (om/get-state owner :in-chan) [(om/get-state owner :own-chan) {:next (om/get-state owner :next-chan)}])
             (let [data-readed (<! (om/get-state owner :own-chan))]
-              (println "\n\n")
-              (println data-readed)
-              (println "\n\n")
-              (println "\n\n")
-;              (om/transact! data  #(merge % data-readed))
               (om/update! data :tenants (:tenants data-readed))
               (om/update! data :token-id (:token-id data-readed))
               (>! (om/get-state owner :flow) :tenants)
@@ -127,7 +123,8 @@
             (let [data-readed (<! (om/get-state owner :own-chan))]
               (om/update! data :token-id (:token-id data-readed))
               (om/update! data :endpoints (:endpoints data-readed))
-              (>! (om/get-state owner :flow)  :endpoints )
+              (>! (om/get-state owner :flow)
+                  (fn [app] (om/build eps/epss app {:init-state {:in-chan (om/get-state owner :next-chan) :flow (om/get-state owner :flow)}} )))
 
               (recur))))
       )
@@ -173,7 +170,7 @@
 
     om/IWillMount
     (will-mount [this]
-(println "listening on connections")
+;(println "listening on connections")
 
                                         ;(om/set-state! owner :connection  (om/get-state owner :in-chan))
       (let [connection (om/get-state owner :own-chan)]
@@ -181,8 +178,8 @@
               (>! (om/get-state owner :in-chan) [(om/get-state owner :own-chan) {:base  (om/get-state owner :next-chan-base) :tenant (om/get-state owner :next-chan-tenant)}])
               (let [connection-type (<! connection)]
                 (om/set-state!  owner :connection-type connection-type)
-                (println (str "mas:::::::::::::::::::"(om/get-state owner :connection-type)))
-                (println (str "************************* setting value" connection-type))
+;                (println (str "mas:::::::::::::::::::"(om/get-state owner :connection-type)))
+ ;               (println (str "************************* setting value" connection-type))
                 (recur))))))
 
     om/IRenderState

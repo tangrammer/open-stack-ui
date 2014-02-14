@@ -11,7 +11,7 @@
   )
 
 (defn service-call [channel service-id token-id publicURL url]
-  (println token-id publicURL url)
+
   (GET
    "/service-call"
    {:params {:token-id token-id :publicURL publicURL :path url}
@@ -36,7 +36,7 @@
 
     om/IRenderState
     (render-state [this  {:keys [own-chan token-id]}]
-      (println (str "tokennnnnn: " token-id))
+
       (apply dom/li #js {:className "list-group-item" } (:name tenant)
              (map
               (fn [av]
@@ -63,17 +63,18 @@
       {:own-chan (chan)
        :next-chan (chan (dropping-buffer 1))})
 
-
-
-      om/IWillMount
+    om/IWillMount
     (will-mount [_]
       (let [try-to-call (om/get-state owner :own-chan)
             flow (om/get-state owner :flow)]
         (go (loop []
-              (>! (om/get-state owner :in-chan) [(om/get-state owner :own-chan) (om/get-state owner :next-chan)])
+              (>! (om/get-state owner :in-chan) [(om/get-state owner :own-chan) {:next (om/get-state owner :next-chan)}])
               (let [data-readed (<! try-to-call)]
-                (om/update! app merge data-readed)
-                (put! flow :service )
+
+                (om/update! app :model (:model data-readed))
+                (om/update! app (:model data-readed) ((:model data-readed) data-readed))
+
+                (>! flow :service )
                 (recur))))))
     om/IRenderState
     (render-state [this state]
@@ -81,4 +82,10 @@
                (dom/div #js {:className "col-md-6 col-md-offset-3"}
                         (dom/h2 #js {:style {:padding-left "100px"}} "endpoints list")
                         (apply dom/ul #js {:className "list-group"}
-                               (om/build-all eps  (vals (:endpoints app)) {:init-state {:token-id (:token-id app)} :state state})))))))
+                               (om/build-all eps  (vals (:endpoints app)) {:init-state {:token-id (:token-id app)
+                                                                                        ;:in-chan (om/get-state owner :next-chan)
+                                                                                        } :state state})))))))
+
+
+(comment {:in-chan (om/get-state owner :next-chan)
+  :flow (:flow state)  })
