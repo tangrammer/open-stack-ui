@@ -53,6 +53,7 @@
   (reify
     om/IInitState
     (init-state [_]
+      (println "init content component")
       {:flow  content-chan
        :stock :welcome
        :next-chan-connections (chan (dropping-buffer 1))
@@ -62,15 +63,18 @@
        })
     om/IWillMount
     (will-mount [_]
-      (println "WILL MOUNT OK content")
+      (println "WILL MOUNT  component content")
       (let [flow  (om/get-state owner :flow)]
         (go (loop []
-              (>! (om/get-state owner :in-chan) [(om/get-state owner :flow) {:connections (om/get-state owner :next-chan-connections)
+
+
+              (println "content component published")
+              (let [flow-state   (<! flow)]
+                (>! (om/get-state owner :in-chan) [(om/get-state owner :flow) {:connections (om/get-state owner :next-chan-connections)
                                                                              :eps (om/get-state owner :next-chan-eps)
                                                                              :tenants (om/get-state owner :next-chan-tenants)
                                                                              :services (om/get-state owner :next-chan-services)}])
-              (let [flow-state   (<! flow)]
-                (println (str "type::: " flow-state))
+                (println (str "content type::: " flow-state))
                 (om/update! app :flow-state flow-state)
                 (om/set-state! owner :stock flow-state)
                 (recur))))))
@@ -147,7 +151,7 @@
     (-> (t connection-type-channel :connection :connections)
         (t :tenant :tenant)
         (t {:endpoints mocks/eps :token-id "xxxxxxxx"} :next)
-        (close!)
+      (close!)
 
         ))
 
@@ -232,6 +236,7 @@
           ))))
 
   (go
+    (>! content-chan :welcome)
     (println "init ")
     (>! content-chan :connection)
     (println "exit 0 ")

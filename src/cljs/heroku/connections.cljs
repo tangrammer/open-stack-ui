@@ -53,14 +53,18 @@
 
     om/IInitState
     (init-state [_]
+      (println "init base component")
       {:own-chan (chan)
        :next-chan (chan (dropping-buffer 1))})
     om/IWillMount
     (will-mount [_]
 
       (go (loop []
+
+            (println "component 'base' published")
             (>! (om/get-state owner :in-chan) [(om/get-state owner :own-chan) {:next (om/get-state owner :next-chan)}])
             (let [data-readed (<! (om/get-state owner :own-chan))]
+
               (om/update! data :tenants (:tenants data-readed))
               (om/update! data :token-id (:token-id data-readed))
 ;              (>! (om/get-state owner :flow) :tenants)
@@ -113,14 +117,19 @@
   (reify
     om/IInitState
     (init-state [_]
+      (println "init tenant component")
       {
        :own-chan (chan)
        :next-chan (chan (dropping-buffer 1)) })
     om/IWillMount
     (will-mount [_]
       (go (loop []
+            (println "component 'tenant' published")
             (>! (om/get-state owner :in-chan) [(om/get-state owner :own-chan) {:next (om/get-state owner :next-chan)}])
             (let [data-readed (<! (om/get-state owner :own-chan))]
+
+
+
               (om/update! data :token-id (:token-id data-readed))
               (om/update! data :endpoints (:endpoints data-readed))
               (>! (om/get-state owner :flow)
@@ -162,6 +171,7 @@
   (reify
     om/IInitState
     (init-state [_]
+      (println "init connections component")
       {
        :own-chan (chan)
        :connection-type :base
@@ -170,13 +180,17 @@
 
     om/IWillMount
     (will-mount [this]
-;(println "listening on connections")
+      (println "will mount connections")
 
                                         ;(om/set-state! owner :connection  (om/get-state owner :in-chan))
       (let [connection (om/get-state owner :own-chan)]
         (go (loop []
+
+              (println "published connections component")
               (>! (om/get-state owner :in-chan) [(om/get-state owner :own-chan) {:base  (om/get-state owner :next-chan-base) :tenant (om/get-state owner :next-chan-tenant)}])
               (let [connection-type (<! connection)]
+
+                (println (str "getting connection-type" connection-type))
                 (om/set-state!  owner :connection-type connection-type)
 ;                (println (str "mas:::::::::::::::::::"(om/get-state owner :connection-type)))
  ;               (println (str "************************* setting value" connection-type))
@@ -185,8 +199,8 @@
     om/IRenderState
     (render-state [this state]
 
-      (println (str "******" (om/get-state owner :connection-type)))
-      (println (str "******" (:connection-type state)))
+;      (println (str "******" (om/get-state owner :connection-type)))
+;      (println (str "******" (:connection-type state)))
 
       (let [connection-type ( :connection-type state)]
         (dom/div #js {:id "connections" :style #js {:float "left"  :width "800px"}}
