@@ -47,7 +47,7 @@
 
 (def content-chan (chan ))
 
-(def shared-chan (chan (dropping-buffer 1) ))
+(def shared-chan (chan (sliding-buffer 1) ))
 
 (defn content [app owner]
   (reify
@@ -56,10 +56,10 @@
       (println "init content component")
       {:flow  content-chan
        :stock :welcome
-       :next-chan-connections (chan (dropping-buffer 1))
-       :next-chan-eps (chan (dropping-buffer 1))
-       :next-chan-tenants (chan (dropping-buffer 1))
-       :next-chan-services (chan (dropping-buffer 1))
+       :next-chan-connections (chan (sliding-buffer 1))
+       :next-chan-eps (chan (sliding-buffer 1))
+       :next-chan-tenants (chan (sliding-buffer 1))
+       :next-chan-services (chan (sliding-buffer 1))
        })
     om/IWillMount
     (will-mount [_]
@@ -236,7 +236,6 @@
           ))))
 
   (go
-    (>! content-chan :welcome)
     (println "init ")
     (>! content-chan :connection)
     (println "exit 0 ")

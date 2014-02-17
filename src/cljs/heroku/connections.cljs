@@ -55,14 +55,13 @@
     (init-state [_]
       (println "init base component")
       {:own-chan (chan)
-       :next-chan (chan (dropping-buffer 1))})
+       :next-chan (chan (sliding-buffer 1))})
     om/IWillMount
     (will-mount [_]
 
       (go (loop []
-
+(>! (om/get-state owner :in-chan) [(om/get-state owner :own-chan) {:next (om/get-state owner :next-chan)}])
             (println "component 'base' published")
-            (>! (om/get-state owner :in-chan) [(om/get-state owner :own-chan) {:next (om/get-state owner :next-chan)}])
             (let [data-readed (<! (om/get-state owner :own-chan))]
 
               (om/update! data :tenants (:tenants data-readed))
@@ -120,16 +119,13 @@
       (println "init tenant component")
       {
        :own-chan (chan)
-       :next-chan (chan (dropping-buffer 1)) })
+       :next-chan (chan (sliding-buffer 1)) })
     om/IWillMount
     (will-mount [_]
       (go (loop []
-            (println "component 'tenant' published")
             (>! (om/get-state owner :in-chan) [(om/get-state owner :own-chan) {:next (om/get-state owner :next-chan)}])
+            (println "component 'tenant' published")
             (let [data-readed (<! (om/get-state owner :own-chan))]
-
-
-
               (om/update! data :token-id (:token-id data-readed))
               (om/update! data :endpoints (:endpoints data-readed))
               (>! (om/get-state owner :flow)
@@ -175,8 +171,8 @@
       {
        :own-chan (chan)
        :connection-type :base
-       :next-chan-base (chan (dropping-buffer 1))
-       :next-chan-tenant (chan (dropping-buffer 1))})
+       :next-chan-base (chan (sliding-buffer 1))
+       :next-chan-tenant (chan (sliding-buffer 1))})
 
     om/IWillMount
     (will-mount [this]
@@ -185,9 +181,8 @@
                                         ;(om/set-state! owner :connection  (om/get-state owner :in-chan))
       (let [connection (om/get-state owner :own-chan)]
         (go (loop []
-
+(>! (om/get-state owner :in-chan) [(om/get-state owner :own-chan) {:base  (om/get-state owner :next-chan-base) :tenant (om/get-state owner :next-chan-tenant)}])
               (println "published connections component")
-              (>! (om/get-state owner :in-chan) [(om/get-state owner :own-chan) {:base  (om/get-state owner :next-chan-base) :tenant (om/get-state owner :next-chan-tenant)}])
               (let [connection-type (<! connection)]
 
                 (println (str "getting connection-type" connection-type))
