@@ -11,11 +11,54 @@
 
   )
 
+
+
 (defn g-value [owner ref]
   (let [input (om/get-node owner ref)]
     (.-value (.-selectedIndex input))
     ))
 
+(defn option [opt owner]
+  (reify
+    om/IInitState
+    (init-state [_]
+      {})
+    om/IRenderState
+    (render-state [_ _]
+      (dom/option #js {:className "list-group-item" :style #js {:float "left"  :width "800px" }} (:name opt)))))
+
+(defn select [app owner]
+  (reify
+    om/IInitState
+    (init-state [_]
+      {:own-chan (chan)})
+
+    om/IWillMount
+    (will-mount [this]
+      (let [connection (om/get-state owner :own-chan)]
+        (go (loop []
+              (let [connection-type (<! connection)]
+                (recur))))))
+
+    om/IRenderState
+    (render-state [this state]
+      (dom/div nil
+               (dom/h3 nil (str "select component" ))
+
+
+
+
+
+               (apply dom/select #js{:ref "juan"
+                                     :onChange (fn [e]
+                                                 (let [v (om/get-node owner "juan")]
+                                                   (.dir js/console (.-selectedIndex (.-options  v )))))}
+
+                        (om/build-all option  (get-in app [:create-server :images])
+                                      {:init-state {:own-chan (om/get-state owner :own-chan)}})))
+
+
+      )))
 
 (defn main-form [app owner]
   (reify
@@ -35,7 +78,8 @@
     (render-state [this state]
       (dom/div nil
                (dom/h3 nil (str "create server area" ))
-               (apply dom/select #js{:ref "juan"  :onChange
+               (om/build select app {:init-state {:in-chan (om/get-state owner :own-chan)}} )
+               #_(apply dom/select #js{:ref "juan"  :onChange
                                      (fn [e] (let [v (om/get-node owner "juan")]
                                               (.dir js/console (.-selectedIndex (.-options  v )))))}
                       (map #(dom/option #js{:value (:id %)} (:name %) )  (get-in app [:create-server :images]) ))
