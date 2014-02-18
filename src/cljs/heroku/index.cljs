@@ -5,6 +5,8 @@
    [heroku.mocks :as mocks]
    [heroku.util :as util]
    [heroku.nav :as nav]
+   [heroku.images :as imgs]
+   [heroku.flavors :as flavs]
    [heroku.endpoints :as eps]
    [heroku.tenants :as tenants]
    [heroku.connections :as conns]
@@ -49,31 +51,47 @@
 
 (def shared-chan (chan (sliding-buffer 1) ))
 
+
+(defn publish [suscriber own nexts ]
+  (println (str "suscriber****************** " nexts))
+  (let [cont (chan)]
+    (go
+;      (>! suscriber [own nexts])
+      (loop []
+        (if-let [in-own-value (<! own)]
+          (do
+            (>! suscriber [own nexts])
+            (>! cont in-own-value)
+            (recur))
+          (close! cont))))
+    cont))
+
+
 (defn content [app owner]
   (reify
     om/IInitState
     (init-state [_]
-      (println "init content component")
+      (println (str "init content component" ))
       {:flow  content-chan
        :stock :welcome
-       :next-chan-connections (chan (sliding-buffer 1))
-       :next-chan-eps (chan (sliding-buffer 1))
-       :next-chan-tenants (chan (sliding-buffer 1))
-       :next-chan-services (chan (sliding-buffer 1))
+       :nexts {:connections (chan (sliding-buffer 1))
+               :eps (chan (sliding-buffer 1))
+               :tenants (chan (sliding-buffer 1))
+               :services (chan (sliding-buffer 1))
+               :images (chan (sliding-buffer 1))
+               :flavors (chan (sliding-buffer 1))}
        })
     om/IWillMount
     (will-mount [_]
-      (println "WILL MOUNT  component content")
+      (om/set-state! owner  :flow (publish
+                                   (om/get-state owner  :in-chan)
+                                   (om/get-state owner :flow)
+                                   (om/get-state owner :nexts)))
+      (println "content component published")
+
       (let [flow  (om/get-state owner :flow)]
         (go (loop []
-
-
-              (println "content component published")
               (let [flow-state   (<! flow)]
-                (>! (om/get-state owner :in-chan) [(om/get-state owner :flow) {:connections (om/get-state owner :next-chan-connections)
-                                                                             :eps (om/get-state owner :next-chan-eps)
-                                                                             :tenants (om/get-state owner :next-chan-tenants)
-                                                                             :services (om/get-state owner :next-chan-services)}])
                 (println (str "content type::: " flow-state))
                 (om/update! app :flow-state flow-state)
                 (om/set-state! owner :stock flow-state)
@@ -89,17 +107,19 @@
                    (condp = flow-state
                      :welcome (dom/h2 nil (str "Welcome!! " (:flow-state app)))
                      :connection (om/build conns/connections app
-                                           {:init-state {:in-chan (om/get-state owner :next-chan-connections) :flow (om/get-state owner :flow)}} )
+                                           {:init-state {:in-chan (:connections (om/get-state owner :nexts)) :flow (om/get-state owner :flow)}} )
 
-; changed to use                      :endpoints (om/build eps/epss app {:state {:in-chan (om/get-state owner :next-chan-eps) :flow (om/get-state owner :flow)}} )
-;changed to use function                     :tenants (om/build tenants/tenants app {:state {:in-chan (om/get-state owner :next-chan-tenants) :flow (om/get-state owner :flow)}} )
+                     :endpoints (om/build eps/epss app {:state {:in-chan (:eps (om/get-state owner :nexts)) :flow (om/get-state owner :flow)}} )
+                                        ;changed to use function                     :tenants (om/build tenants/tenants app {:state {:in-chan (om/get-state owner :next-chan-tenants) :flow (om/get-state owner :flow)}} )
+                     :images (om/build imgs/images app {:state {:in-chan (:images(om/get-state owner :nexts)) :flow (om/get-state owner :flow)}} )
+                     :flavors (om/build flavs/flavors app {:state {:in-chan (:flavors (om/get-state owner :nexts)) :flow (om/get-state owner :flow)}} )
                      :service (do
-                                (dom/div #js {:id "service" :style #js {  :width "100%" }}
-                                         (dom/h2 nil (str "service call!: " (:model app)))
+                                                            (dom/div #js {:id "service" :style #js {  :width "100%" }}
+                                                                     (dom/h2 nil (str "service call!: " (:model app)))
 
-                                         (dom/button #js {:className "btn  btn-primary " :type "button"
-                                                          :onClick #(put! (om/get-state owner :flow)  :endpoints )} "endpoints again!")
-                                         (dom/pre nil (dom/code nil (JSON/stringify (clj->js ((:model app) app)) nil 2)))))
+                                                                     (dom/button #js {:className "btn  btn-primary " :type "button"
+                                                                                      :onClick #(put! (om/get-state owner :flow)  :endpoints )} "endpoints again!")
+                                                                     (dom/pre nil (dom/code nil (JSON/stringify (clj->js ((:model app) app)) nil 2)))))
                      (js/alert (str  "else" flow-state))
                      )
                                         ;(js/alert "ofu")
@@ -145,7 +165,6 @@
 
 (comment
 
-
   (go
     (>! content-chan :welcome)
     (-> (t connection-type-channel :connection :connections)
@@ -178,6 +197,8 @@
     (-> (t connection-type-channel :connection :connections)
         (t :base :base)
         (t {:token-id "xxxxxxxx" :tenants mocks/tenants} :next)
+        (t {:endpoints mocks/eps :token-id "xxxxxxxx"} :next)
+        (t {:images mocks/images :model :images } :next)
         (close!)
       ))
   (println "\n\n\n")
@@ -188,36 +209,7 @@
 
     )
 
-  (go
-    (>! content-chan :welcome)
 
-    (let [conns (go (let [[out {:keys [connections]}] (<! connection-type-channel)]
-                      (>! out  :connection)
-                      (<! connections)))
-          tenant (go (let [[out {:keys [tenant]}] (<! conns)]
-                       (>! out  :tenant)
-                       (<! tenant)))
-          x (go (let [[out _] (<! tenant)]
-                  (>! out  {:endpoints mocks/eps :token-id "xxxxxxxx"})
-                  (<! _)))]
-      (<! x)
-      )
-    )
-
-  (go
-    (>! content-chan :welcome)
-    (let [conns (go (let [[out {:keys [connections]}] (<! connection-type-channel)]
-                      (>! out  :connection)
-                      (<! connections)))
-          base (go (let [[out {:keys [base]}] (<! conns)]
-                     (>! out  :base)
-                     (<! base)))
-          x (go (let [[out _] (<! base)]
-                  (>! out {:token-id "xxxxxxxx" :tenants mocks/tenants})
-                  (<! _)))]
-      (<! x)
-      )
-    )
 
   (go
     (println "init ")

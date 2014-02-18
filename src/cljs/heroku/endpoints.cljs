@@ -7,7 +7,7 @@
    [om.core :as om :include-macros true]
    [om.dom :as dom :include-macros true]
    [clojure.browser.repl]
-   [cljs.core.async :refer [put! chan <! dropping-buffer >!]])
+   [cljs.core.async :refer [put! chan <! sliding-buffer >!]])
   )
 
 (defn service-call [channel service-id token-id publicURL url]
@@ -61,7 +61,7 @@
       om/IInitState
     (init-state [_]
       {:own-chan (chan)
-       :next-chan (chan (dropping-buffer 1))})
+       :next-chan (chan (sliding-buffer 1))})
 
     om/IWillMount
     (will-mount [_]
@@ -70,11 +70,12 @@
         (go (loop []
               (>! (om/get-state owner :in-chan) [(om/get-state owner :own-chan) {:next (om/get-state owner :next-chan)}])
               (let [data-readed (<! try-to-call)]
-
                 (om/update! app :model (:model data-readed))
                 (om/update! app (:model data-readed) ((:model data-readed) data-readed))
-
-                (>! flow :service )
+                (condp = (:model data-readed)
+                    :images (>! flow :images )
+                    :flavors (>! flow :flavors )
+                    (>! flow :service ))
                 (recur))))))
     om/IRenderState
     (render-state [this state]

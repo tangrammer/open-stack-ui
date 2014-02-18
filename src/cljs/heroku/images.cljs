@@ -1,4 +1,4 @@
-(ns heroku.tenants
+(ns heroku.images
   (:require-macros [cljs.core.async.macros :refer [go]])
   (:require
    [heroku.util :as util]
@@ -11,7 +11,7 @@
    [cljs.core.async :refer [put! chan <! >! sliding-buffer]])
   )
 
-(defn connect-tennant [channel url username password tenant]
+#_(defn connect-tennant [channel url username password tenant]
   (GET
    "/endpoints"
    {:params {:url url :password password :username username :tenantname tenant  }
@@ -25,23 +25,25 @@
     :keywords? true})
   )
 
-(defn tenant [tenant owner]
+(defn image [image owner]
   (reify
     om/IInitState
     (init-state [_]
       {})
     om/IRenderState
     (render-state [this {:keys [own-chan]}]
-      (dom/li #js {:className "list-group-item" :style #js {:float "left"  :width "800px" }} (:name tenant)
+      (dom/li #js {:className "list-group-item" :style #js {:float "left"  :width "800px" }} (:href (first (:links image)))
               (dom/button #js {
                                :onClick (fn []
-                                          (connect-tennant own-chan "http://192.168.1.23:5000" "admin" "password" (:name @tenant)))
+                                          #_(connect-tennant own-chan "http://192.168.1.23:5000" "admin" "password" (:name @tenant))
+                                          (js/alert "here")
+                                          )
 
-                                 :className "btn btn-primary btn-xs"} (:name tenant)))
+                                 :className "btn btn-primary btn-xs"} (:name image)))
 
       )))
 
-(defn tenants [app owner]
+(defn images [app owner]
   (reify
     om/IInitState
     (init-state [_]
@@ -56,7 +58,7 @@
               (let [data-readed (<! select-chan)]
 
                 (om/update! app :token-id (:token-id data-readed))
-              (om/update! app :endpoints (:endpoints data-readed))
+                (om/update! app :endpoints (:endpoints data-readed))
 
                 (>! (om/get-state owner :flow)
                     (fn [app] (om/build eps/epss app {:init-state {:in-chan (om/get-state owner :next-chan) :flow (om/get-state owner :flow)}} )))
@@ -66,6 +68,6 @@
     om/IRenderState
     (render-state [this state]
       (dom/div #js { :style #js {:float "left"  :width "800px"}}
-               (dom/h2 nil "Tenants list")
+               (dom/h2 nil "Images list")
                (apply dom/ul #js {:className "list-group"}
-                      (om/build-all tenant (:tenants app) {:init-state state}))))))
+                      (om/build-all image (:images app) {:init-state state}))))))
