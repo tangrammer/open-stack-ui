@@ -7,7 +7,7 @@
    [heroku.endpoints :as eps]
    [om.core :as om :include-macros true]
    [om.dom :as dom :include-macros true]
-   [clojure.browser.repl]
+
    [cljs.core.async :refer [put! chan <! >! sliding-buffer]])
   )
 

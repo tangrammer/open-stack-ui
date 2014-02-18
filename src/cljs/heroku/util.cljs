@@ -1,5 +1,23 @@
-(ns heroku.util)
+(ns heroku.util
+  (:require-macros [cljs.core.async.macros :refer [go]]
+                   [heroku.mac :refer [t minimal]])
+  (:require    [cljs.core.async :refer [put! chan <! >! sliding-buffer dropping-buffer close!]])
+    )
 
+
+(defn publish [suscriber own nexts ]
+  (println (str "suscriber****************** " nexts))
+  (let [cont (chan)]
+    (go
+;      (>! suscriber [own nexts])
+      (loop []
+        (if-let [in-own-value (<! own)]
+          (do
+            (>! suscriber [own nexts])
+            (>! cont in-own-value)
+            (recur))
+          (close! cont))))
+    cont))
 
 (def available-calls {:nova [{:url "/images" :id :images}
                              {:url "/flavors" :id :flavors}

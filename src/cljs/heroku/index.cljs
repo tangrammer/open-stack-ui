@@ -6,6 +6,7 @@
    [heroku.util :as util]
    [heroku.nav :as nav]
    [heroku.images :as imgs]
+   [heroku.createserver :as create-server]
    [heroku.flavors :as flavs]
    [heroku.endpoints :as eps]
    [heroku.tenants :as tenants]
@@ -52,19 +53,7 @@
 (def shared-chan (chan (sliding-buffer 1) ))
 
 
-(defn publish [suscriber own nexts ]
-  (println (str "suscriber****************** " nexts))
-  (let [cont (chan)]
-    (go
-;      (>! suscriber [own nexts])
-      (loop []
-        (if-let [in-own-value (<! own)]
-          (do
-            (>! suscriber [own nexts])
-            (>! cont in-own-value)
-            (recur))
-          (close! cont))))
-    cont))
+
 
 
 (defn content [app owner]
@@ -76,6 +65,7 @@
        :stock :welcome
        :nexts {:connections (chan (sliding-buffer 1))
                :eps (chan (sliding-buffer 1))
+               :create-server (chan (sliding-buffer 1))
                :tenants (chan (sliding-buffer 1))
                :services (chan (sliding-buffer 1))
                :images (chan (sliding-buffer 1))
@@ -83,7 +73,7 @@
        })
     om/IWillMount
     (will-mount [_]
-      (om/set-state! owner  :flow (publish
+      (om/set-state! owner  :flow (util/publish
                                    (om/get-state owner  :in-chan)
                                    (om/get-state owner :flow)
                                    (om/get-state owner :nexts)))
@@ -113,6 +103,8 @@
                                         ;changed to use function                     :tenants (om/build tenants/tenants app {:state {:in-chan (om/get-state owner :next-chan-tenants) :flow (om/get-state owner :flow)}} )
                      :images (om/build imgs/images app {:state {:in-chan (:images(om/get-state owner :nexts)) :flow (om/get-state owner :flow)}} )
                      :flavors (om/build flavs/flavors app {:state {:in-chan (:flavors (om/get-state owner :nexts)) :flow (om/get-state owner :flow)}} )
+                     :create-server (om/build create-server/main-form app {:state {:in-chan (:create-server (om/get-state owner :nexts))
+                                                                                   :flow (om/get-state owner :flow)}} )
                      :service (do
                                                             (dom/div #js {:id "service" :style #js {  :width "100%" }}
                                                                      (dom/h2 nil (str "service call!: " (:model app)))
@@ -173,6 +165,18 @@
       (close!)
 
         ))
+
+  (go
+    (>! content-chan :welcome)
+    (-> (t connection-type-channel :connection :connections)
+        (t :tenant :tenant)
+        (t {:endpoints mocks/eps :token-id "xxxxxxxx"} :next)
+        (t {:create-server mocks/create-server :model :create-server} :next)
+      (close!)
+
+      ))
+
+
 
   (go
     (>! content-chan :welcome)

@@ -6,7 +6,7 @@
    [ajax.core :refer [GET POST]]
    [om.core :as om :include-macros true]
    [om.dom :as dom :include-macros true]
-   [clojure.browser.repl]
+
    [cljs.core.async :refer [put! chan <! sliding-buffer >!]])
   )
 
@@ -75,6 +75,7 @@
                 (condp = (:model data-readed)
                     :images (>! flow :images )
                     :flavors (>! flow :flavors )
+                    :create-server (>! flow :create-server )
                     (>! flow :service ))
                 (recur))))))
     om/IRenderState
