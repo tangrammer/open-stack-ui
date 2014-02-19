@@ -22,7 +22,13 @@
 
 
 (def networks
-  [{:status "ACTIVE", :provider:network_type "local", :provider:physical_network nil, :router:external true, :admin_state_up true, :name "public", :subnets ["52c536a1-6bee-4b87-892c-14871423335d"], :shared false, :tenant_id "542461de33ee417aae7358f204764f47", :provider:segmentation_id nil, :id "dafc72f2-1395-4913-a376-d512801447db"} {:status "ACTIVE", :provider:network_type "local", :provider:physical_network nil, :router:external false, :admin_state_up true, :name "private", :subnets ["d45a6bbe-fd3d-450b-a96f-3e13a4d27048"], :shared false, :tenant_id "2a4e13a9da1e43b0bf3cb16b3e0e2aeb", :provider:segmentation_id nil, :id "f9661eaa-39ee-4ddb-8693-05efd1a92136"}])
+  [{:status "ACTIVE",
+    :provider:network_type "local",
+    :provider:physical_network nil,
+    :router:external true,
+    :admin_state_up true,
+    :name "public",
+    :subnets ["52c536a1-6bee-4b87-892c-14871423335d"], :shared false, :tenant_id "542461de33ee417aae7358f204764f47", :provider:segmentation_id nil, :id "dafc72f2-1395-4913-a376-d512801447db"} {:status "ACTIVE", :provider:network_type "local", :provider:physical_network nil, :router:external false, :admin_state_up true, :name "private", :subnets ["d45a6bbe-fd3d-450b-a96f-3e13a4d27048"], :shared false, :tenant_id "2a4e13a9da1e43b0bf3cb16b3e0e2aeb", :provider:segmentation_id nil, :id "f9661eaa-39ee-4ddb-8693-05efd1a92136"}])
 
 
 (def subnets

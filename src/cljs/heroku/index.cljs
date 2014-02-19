@@ -29,7 +29,7 @@
   (reify
     om/IRender
     (render [this]
-      (dom/div #js {:id "menu"  :style #js{:float "left" :margin-right "50px" :width "300px"}}
+      (dom/div #js {:id "menu"  :style #js{:float "left" :margin-right "50px" :width "300px" :height "500px"}}
                (dom/ul #js {:className "nav nav-tabs nav-stacked"}
                        (dom/li #js {:ref "welcome" :className ""}
                                (dom/a #js {:href "#" :onClick #(do
@@ -166,15 +166,33 @@
 
         ))
 
+
   (go
     (>! content-chan :welcome)
     (-> (t connection-type-channel :connection :connections)
         (t :tenant :tenant)
         (t {:endpoints mocks/eps :token-id "xxxxxxxx"} :next)
         (t {:create-server mocks/create-server :model :create-server} :next)
-      (close!)
+        (close!)
+        ))
 
-      ))
+  "once you have in memmory all these data ....."
+  (let [real-eps (:endpoints @app-state)
+        real-token (:token-id @app-state)
+        flavors (:flavors @app-state)
+        images (:images @app-state)
+        networks (:networks @app-state)
+
+        ]
+   (go
+     (>! content-chan :welcome)
+     (-> (t connection-type-channel :connection :connections)
+         (t :tenant :tenant)
+         (t {:endpoints real-eps :token-id real-token} :next)
+         (t {:create-server {:flavors flavors :networks networks :images images} :model :create-server} :next)
+         (close!)
+
+         )))
 
 
 

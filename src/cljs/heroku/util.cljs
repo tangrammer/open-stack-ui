@@ -1,10 +1,16 @@
 (ns heroku.util
   (:require-macros [cljs.core.async.macros :refer [go]]
                    [heroku.mac :refer [t minimal]])
-  (:require    [cljs.core.async :refer [put! chan <! >! sliding-buffer dropping-buffer close!]])
+  (:require
+   [om.core :as om :include-macros true]
+   [om.dom :as dom :include-macros true]
+   [cljs.core.async :refer [put! chan <! >! sliding-buffer dropping-buffer close!]])
     )
 
-
+(defn get-value [owner ref]
+  (let [input (om/get-node owner ref)]
+    (.-value input)
+    ))
 (defn publish [suscriber own nexts ]
   (println (str "suscriber****************** " nexts))
   (let [cont (chan)]

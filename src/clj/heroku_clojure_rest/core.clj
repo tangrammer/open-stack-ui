@@ -9,7 +9,7 @@
              [ring.middleware.json :as middleware]
              [compojure.core :refer [defroutes ANY POST GET routes]]
              [compojure.handler :as comphand]
-            [compojure.route :refer (resources)]
+             [compojure.route :refer (resources)]
             [clojure.java.io :as io]))
 
 (def username "facebook1428467850")
@@ -53,8 +53,38 @@
          (let [r (service-call token-id publicURL (reduce str "" (rest path)))]
            (println r)
            (resp/response r)))
+    (ANY "/create-server" [url server-name token-id image-href flavor-href network-id]
+         ;(println token-id)
+         (println url  image-href flavor-href network-id)
+         (let [r (create-server token-id url server-name  flavor-href image-href network-id)]
+           (println r)
+           (resp/response r)))
 
 )
+
+(comment "process create-server"
+(def username "admin")
+(def password "password")
+(def url "http://192.168.1.16:5000")
+
+(def eps-res (endpoints url username password username))
+(def eps (structured-endpoints eps-res))
+(def token-id (get-in eps-res [:access :token :id]))
+(def nova-url (:publicURL (:compute eps)))
+(def quantum-url (:publicURL (:network eps)))
+(def images (service-call token-id nova-url :images))
+(def image (:href (first (:links (first (:images images))))))
+(def flavors (service-call token-id nova-url :flavors))
+(def flavor (:href (first (:links (first (:flavors flavors))))))
+(def networks (service-call token-id quantum-url "v2.0/networks"))
+(def network (:id (first (:networks networks))))
+(create-server token-id (str nova-url "/servers") "juanito88" flavor image network)
+(vec (map str [ token-id (str nova-url "/servers") "juanito88" flavor image network]))
+
+
+
+         )
+
 
 
 (declare server)
