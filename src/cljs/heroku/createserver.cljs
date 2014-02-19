@@ -42,8 +42,9 @@
 
 (defn option [opt owner]
   (reify
-    om/IRender
-    (render [_]
+    om/IRenderState
+    (render-state [_ _]
+      (.log js/console (clj->js opt))
       (dom/option #js {:className "list-group-item" :style #js {:float "left"  :width "800px" }} (:name opt)))))
 
 (defn select [app owner]
@@ -51,7 +52,8 @@
     om/IRenderState
     (render-state [this {:keys [select-chan list-model select-name]}]
       (dom/div nil
-             (dom/label nil (str "selecting " select-name))
+               (dom/label nil (str "selecting " select-name))
+
              (dom/br nil "")
 
              (apply dom/select #js{:defaultValue 0 :ref select-name
@@ -61,7 +63,7 @@
                                                  (.dir js/console @list-model)
                                                  (put! select-chan [ select-name (get  @list-model (dec selected-index))])))}
                     (dom/option #js{ :disabled true} "") ;:disabled true
-                    (om/build-all option  (om/get-state owner :list-model))))
+                    (om/build-all option (om/get-state owner :list-model))))
 
 
       )))
@@ -79,7 +81,10 @@
         (go (loop []
               (let [[k v] (<! connection)]
                 (if (= k :server)
-                  (om/update! app k v)
+                  (do
+                    (om/update! app k v)
+                    (>! (om/get-state owner :flow) :server-created)
+                      )
                   (om/set-state! owner k v)
                   )
                 (println (str "***************" k v))
@@ -90,6 +95,12 @@
     (render-state [this state]
       (dom/div nil
                (dom/div nil
+
+                   (dom/pre nil (dom/code nil (JSON/stringify (clj->js (get-in app [:create-server :images]) ) nil 2)))
+               (dom/pre nil (dom/code nil (JSON/stringify (clj->js (get-in app [:create-server :flavors]) ) nil 2)))
+               (dom/pre nil (dom/code nil (JSON/stringify (clj->js (get-in app [:create-server :networks]) ) nil 2)))
+
+
                         (dom/h3 nil (str "create server area" ))
 
                         (dom/form #js {:className "form-signin" :role "form" }
@@ -124,9 +135,7 @@
 
 
                         )
-               (comment      (dom/pre nil (dom/code nil (JSON/stringify (clj->js (get-in app [:create-server :images]) ) nil 2)))
-                             (dom/pre nil (dom/code nil (JSON/stringify (clj->js (get-in app [:create-server :flavors]) ) nil 2)))
-                             (dom/pre nil (dom/code nil (JSON/stringify (clj->js (get-in app [:create-server :networks]) ) nil 2)))))
+               )
 
       #_(let [connection-type ( :connection-type state)]
           (dom/div #js {:id "connections" :style #js {:float "left"  :width "800px"}}

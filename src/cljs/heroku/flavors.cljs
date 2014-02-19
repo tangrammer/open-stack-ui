@@ -68,5 +68,7 @@
     (render-state [this state]
       (dom/div #js { :style #js {:float "left"  :width "800px"}}
                (dom/h2 nil "flavors list")
+               (dom/button #js {:className "btn  btn-primary " :type "button"
+                                :onClick #(put! (om/get-state owner :flow)  :endpoints )} "endpoints again!")
                (apply dom/ul #js {:className "list-group"}
                       (om/build-all flavor (:flavors app) {:init-state state}))))))

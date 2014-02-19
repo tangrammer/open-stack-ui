@@ -61,10 +61,15 @@
       om/IInitState
     (init-state [_]
       {:own-chan (chan)
+
        :next-chan (chan (sliding-buffer 1))})
 
     om/IWillMount
     (will-mount [_]
+
+
+
+
       (let [try-to-call (om/get-state owner :own-chan)
             flow (om/get-state owner :flow)]
         (go (loop []
@@ -83,6 +88,31 @@
       (dom/div #js {:className "row"  :style #js {:float "left"  :width "800px"}}
                (dom/div #js {:className "col-md-6 col-md-offset-3"}
                         (dom/h2 #js {:style {:padding-left "100px"}} "endpoints list")
+
+                        (dom/button #js {:className "btn  btn-primary " :type "button"
+                                         :onClick
+                                         #(let [images (chan)
+                                                flavors (chan)
+                                                networks (chan)
+
+                                                ]
+                                            (service-call images :images (:token-id @app) (get-in @app [:endpoints :compute :publicURL]) "/images")
+                                            (service-call flavors :flavors (:token-id @app) (get-in @app [:endpoints :compute :publicURL]) "/flavors")
+                                            (service-call networks :networks (:token-id @app) (get-in @app [:endpoints :network :publicURL]) "/v2.0/networks")
+
+
+                                            (go
+                                              (let [res {:create-server {:flavors (<! flavors) :networks (<! networks) :images (<! images)}
+                                                         :model :create-server}]
+
+                                                (>! (om/get-state owner :own-chan) res)
+                                                ))
+
+
+
+
+                                            )} "create-server!")
+
                         (apply dom/ul #js {:className "list-group"}
                                (om/build-all eps  (vals (:endpoints app)) {:init-state {:token-id (:token-id app)
                                                                                         :own-chan (om/get-state owner :own-chan)

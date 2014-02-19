@@ -105,6 +105,12 @@
                      :flavors (om/build flavs/flavors app {:state {:in-chan (:flavors (om/get-state owner :nexts)) :flow (om/get-state owner :flow)}} )
                      :create-server (om/build create-server/main-form app {:state {:in-chan (:create-server (om/get-state owner :nexts))
                                                                                    :flow (om/get-state owner :flow)}} )
+                     :server-created (do
+                                                            (dom/div nil
+                                                                     (dom/h2 nil "server created ok!")
+
+
+                                                                     (dom/pre nil (dom/code nil (JSON/stringify (clj->js (:server  app)) nil 2)))))
                      :service (do
                                                             (dom/div #js {:id "service" :style #js {  :width "100%" }}
                                                                      (dom/h2 nil (str "service call!: " (:model app)))
@@ -182,6 +188,7 @@
         flavors (:flavors @app-state)
         images (:images @app-state)
         networks (:networks @app-state)
+        create-server {:create-server (:create-server @app-state) :model :create-server}
 
         ]
    (go
@@ -189,7 +196,7 @@
      (-> (t connection-type-channel :connection :connections)
          (t :tenant :tenant)
          (t {:endpoints real-eps :token-id real-token} :next)
-         (t {:create-server {:flavors flavors :networks networks :images images} :model :create-server} :next)
+         (t create-server :next)
          (close!)
 
          )))
