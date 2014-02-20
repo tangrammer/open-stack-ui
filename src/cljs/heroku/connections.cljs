@@ -19,7 +19,7 @@
     (.-value input)
     ))
 
-(defn connect-tenants-list [channel url token-id]
+(defn connect-tenants-list [channel url  username password token-id]
   (GET
    "/tenants"
    {:params {:url url :token-id token-id}
@@ -27,8 +27,7 @@
 
                (if (:success response)
                  (do
-                                        ;(swap! app-state assoc :url url)
-                   (put! channel  {:token-id token-id :tenants (:tenants response)}))
+                   (put! channel  {:token-id token-id :tenants (:tenants response) :url url :username username :password password}))
                  (js/alert response)))
     :error-handler util/error-handler
     :response-format :json
@@ -41,7 +40,7 @@
     :handler (fn [response]
 
                (if (:success response)
-                 (connect-tenants-list channel url (get-in response [:access :token :id]))
+                 (connect-tenants-list channel url  username password (get-in response [:access :token :id]))
 
                  (js/alert response)))
     :error-handler util/error-handler
@@ -67,7 +66,10 @@
               (om/update! data :tenants (:tenants data-readed))
               (om/update! data :token-id (:token-id data-readed))
 ;              (>! (om/get-state owner :flow) :tenants)
-              (>! (om/get-state owner :flow) (fn [app] (om/build tenants/tenants app {:init-state {:in-chan (om/get-state owner :next-chan) :flow (om/get-state owner :flow)}} )))
+              (>! (om/get-state owner :flow)
+                  (fn [app] (om/build tenants/tenants app
+                                     {:init-state {:in-chan (om/get-state owner :next-chan) :flow (om/get-state owner :flow)
+                                                    :url (:url data-readed) :username (:username data-readed) :password (:password data-readed)}} )))
               (recur))))
       )
 
@@ -204,7 +206,7 @@
                  (dom/h3 nil (str "CONNECTION AREA" connection-type))
                  (om/build nav/navbar app {:init-state {:connection (om/get-state owner :own-chan)}} )
                  (if (= connection-type :base)
-                   (om/build base app {:init-state {:in-chan (om/get-state owner :next-chan-base) :flow (:flow state) }} )
+                   (om/build base app {:init-state {:in-chan (om/get-state owner :next-chan-base) :flow (:flow state)}} )
                    (om/build tenant app {:init-state {:in-chan (om/get-state owner :next-chan-tenant):flow (:flow state)  }
                                          } )
                    )

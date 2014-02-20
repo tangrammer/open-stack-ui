@@ -21,7 +21,7 @@
     :handler (fn [response]
                (if (:success response)
                  (do
-                   (println response)
+;                   (println response)
                    (put! channel [:server (:server response)])
                    )
                  (js/alert response)))
@@ -36,7 +36,7 @@
 (defn gg-value [owner ref]
 
   (let [v (om/get-node owner ref)]
-    (.dir js/console (.-selectedIndex (.-options  v )))
+;    (.dir js/console (.-selectedIndex (.-options  v )))
     (.-selectedIndex (.-options  v )))
   )
 
@@ -44,7 +44,7 @@
   (reify
     om/IRenderState
     (render-state [_ _]
-      (.log js/console (clj->js opt))
+
       (dom/option #js {:className "list-group-item" :style #js {:float "left"  :width "800px" }} (:name opt)))))
 
 (defn select [app owner]
@@ -60,7 +60,7 @@
                                    :onChange (fn [e]
                                                (let [selected-index (gg-value owner select-name)
                                                      ]
-                                                 (.dir js/console @list-model)
+;                                                 (.dir js/console @list-model)
                                                  (put! select-chan [ select-name (get  @list-model (dec selected-index))])))}
                     (dom/option #js{ :disabled true} "") ;:disabled true
                     (om/build-all option (om/get-state owner :list-model))))
@@ -96,9 +96,10 @@
       (dom/div nil
                (dom/div nil
 
-                   (dom/pre nil (dom/code nil (JSON/stringify (clj->js (get-in app [:create-server :images]) ) nil 2)))
-               (dom/pre nil (dom/code nil (JSON/stringify (clj->js (get-in app [:create-server :flavors]) ) nil 2)))
-               (dom/pre nil (dom/code nil (JSON/stringify (clj->js (get-in app [:create-server :networks]) ) nil 2)))
+
+                        (comment      (dom/pre nil (dom/code nil (JSON/stringify (clj->js (get-in app [:create-server :images]) ) nil 2)))
+                                      (dom/pre nil (dom/code nil (JSON/stringify (clj->js (get-in app [:create-server :flavors]) ) nil 2)))
+                                      (dom/pre nil (dom/code nil (JSON/stringify (clj->js (get-in app [:create-server :networks]) ) nil 2))))
 
 
                         (dom/h3 nil (str "create server area" ))
@@ -112,7 +113,7 @@
 
 
                                   (om/build select app {:init-state {:select-chan (om/get-state owner :own-chan) :select-name :image-select :list-model (get-in app [:create-server :images])}} )
-                                  (om/build select app {:init-state {:select-chan (om/get-state owner :own-chan) :select-name :flavor-select :list-model (get-in app [:create-server :flavors])}} )
+                                 (om/build select app {:init-state {:select-chan (om/get-state owner :own-chan) :select-name :flavor-select :list-model (get-in app [:create-server :flavors])}} )
                                   (om/build select app {:init-state {:select-chan (om/get-state owner :own-chan) :select-name :network-select :list-model (get-in app [:create-server :networks])}} )
                                   (dom/br nil "")
                                   (dom/button #js {:className "btn btn-lg btn-primary btn-block" :type "button"

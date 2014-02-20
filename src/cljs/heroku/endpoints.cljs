@@ -30,7 +30,7 @@
 
 (defn eps [tenant owner]
   (reify
-      om/IInitState
+    om/IInitState
     (init-state [_]
       {})
 
@@ -42,15 +42,15 @@
               (fn [av]
                 (dom/button #js {
                                  :onClick #(do
-                                             ;(.dir js/console owner)
+                                        ;(.dir js/console owner)
                                              (service-call own-chan
                                                            (:id av)
-                                                            token-id
+                                                           token-id
                                                            (:publicURL @tenant) (:url av))
                                              )
                                  :className "btn btn-primary btn-xs"} (:url av)) )
 
-                                        ((keyword (:name tenant)) util/available-calls )
+              ((keyword (:name tenant)) util/available-calls )
 
               )
 
@@ -58,7 +58,7 @@
 
 (defn epss [app owner]
   (reify
-      om/IInitState
+    om/IInitState
     (init-state [_]
       {:own-chan (chan)
 
@@ -78,10 +78,10 @@
                 (om/update! app :model (:model data-readed))
                 (om/update! app (:model data-readed) ((:model data-readed) data-readed))
                 (condp = (:model data-readed)
-                    :images (>! flow :images )
-                    :flavors (>! flow :flavors )
-                    :create-server (>! flow :create-server )
-                    (>! flow :service ))
+                  :images (>! flow :images )
+                  :flavors (>! flow :flavors )
+                  :create-server (>! flow :create-server )
+                  (>! flow :service ))
                 (recur))))))
     om/IRenderState
     (render-state [this state]
@@ -102,7 +102,7 @@
 
 
                                             (go
-                                              (let [res {:create-server {:flavors (<! flavors) :networks (<! networks) :images (<! images)}
+                                              (let [res {:create-server {:flavors (:flavors (<! flavors)) :networks (:networks (<! networks)) :images (:images (<! images))}
                                                          :model :create-server}]
 
                                                 (>! (om/get-state owner :own-chan) res)
@@ -120,4 +120,4 @@
 
 
 (comment {:in-chan (om/get-state owner :next-chan)
-  :flow (:flow state)  })
+          :flow (:flow state)  })

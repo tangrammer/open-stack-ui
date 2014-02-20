@@ -12,7 +12,7 @@
     (.-value input)
     ))
 (defn publish [suscriber own nexts ]
-  (println (str "suscriber****************** " nexts))
+;  (println (str "suscriber****************** " nexts))
   (let [cont (chan)]
     (go
 ;      (>! suscriber [own nexts])
@@ -57,6 +57,8 @@
 (defn error-handler [{:keys [status status-text]}]
   (.log js/console (str "something bad happened: " status " " status-text)))
 
+(defn dir [o]
+  (.dir js/console o))
 
 (comment
   (om/root (swap! app-state assoc :text "holooo") widget (. js/document (getElementById "my-app")))

@@ -5,6 +5,7 @@
    [heroku.mocks :as mocks]
    [heroku.util :as util]
    [heroku.nav :as nav]
+   [heroku.menu :as men]
    [heroku.images :as imgs]
    [heroku.createserver :as create-server]
    [heroku.flavors :as flavs]
@@ -18,43 +19,13 @@
    [cljs.core.async :refer [put! chan <! >! sliding-buffer dropping-buffer close!]])
   )
 
-
 (enable-console-print!)
-
-
-(defn dir [o]
-  (.dir js/console o))
-
-(defn menu [app owner]
-  (reify
-    om/IRender
-    (render [this]
-      (dom/div #js {:id "menu"  :style #js{:float "left" :margin-right "50px" :width "300px" :height "500px"}}
-               (dom/ul #js {:className "nav nav-tabs nav-stacked"}
-                       (dom/li #js {:ref "welcome" :className ""}
-                               (dom/a #js {:href "#" :onClick #(do
-                                        ;(change-cssclass owner "tenant" "active")
-                                        ;(change-cssclass owner "base" "")
-                                                                 (put! (om/get-state owner :flow) :welcome))} "Welcome to OS UI"))
-                       (dom/li #js {:ref "connection" :className ""}
-                               (dom/a #js {:href "#"
-                                           :onClick #(do
-                                        ;(change-cssclass owner "base" "active")
-                                        ;(change-cssclass owner "tenant" "")
-                                                       (put! (om/get-state owner :flow) :connection))
-                                           } "Connect to a OS Instance"))
-                       )
-
-
-               ))))
 
 (def content-chan (chan ))
 
 (def shared-chan (chan (sliding-buffer 1) ))
 
-
-
-
+(def app-state (atom {:title "the app tittle" :menu "the menu" :flow-state :welcome}))
 
 (defn content [app owner]
   (reify
@@ -82,7 +53,7 @@
       (let [flow  (om/get-state owner :flow)]
         (go (loop []
               (let [flow-state   (<! flow)]
-                (println (str "content type::: " flow-state))
+;                (println (str "content type::: " flow-state))
                 (om/update! app :flow-state flow-state)
                 (om/set-state! owner :stock flow-state)
                 (recur))))))
@@ -91,7 +62,7 @@
 
       (let [flow-state  (:stock state)]
         (dom/div #js {:id "content" :style #js {  :width "100%" }}
-                 (om/build menu app {:state state} )
+                 (om/build men/menu app {:state state} )
                                         ;
                  (if (keyword? flow-state)
                    (condp = flow-state
@@ -134,33 +105,15 @@
       (dom/div #js {:id "container" :style #js {:width "1200px" }}
                (om/build content app {:init-state {:in-chan shared-chan}})))))
 
-(def app-state (atom {:title "the app tittle" :menu "the menu" :flow-state :welcome}))
-
 (om/root container app-state {:target (. js/document (getElementById "my-app"))})
 
+
+
+
+
+(println "\n\n\n\n\n\n\n\n\n")
 ;;;;;;;;;;;;;;;;; TESTING ;;;;;;;;;;;;;;
-(defn testing [state]
-  (swap! app-state assoc :flow-state state)
-  )
-
-
-(defn to-out-channel [in model]
-  (go (let [[out next] (<! in)]
-        (>! out  model)
-        (<! next)))
-  )
-
-(defn inject [in model]
-  (go (let [[out next] (<! in)]
-        (>! out  model)
-        (<! next)))
-  )
-
 (def connection-type-channel shared-chan)
-(defn result-of-inject [value channel]
-  (inject channel value))
-
-
 (comment
 
   (go
@@ -168,6 +121,7 @@
     (-> (t connection-type-channel :connection :connections)
         (t :tenant :tenant)
         (t {:endpoints mocks/eps :token-id "xxxxxxxx"} :next)
+
       (close!)
 
         ))
@@ -280,4 +234,3 @@
 
 
   )
-(println "\n\n\n\n\n\n\n\n\n")

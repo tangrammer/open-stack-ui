@@ -31,11 +31,11 @@
     (init-state [_]
       {})
     om/IRenderState
-    (render-state [this {:keys [own-chan]}]
+    (render-state [this {:keys [own-chan url username password]}]
       (dom/li #js {:className "list-group-item" :style #js {:float "left"  :width "800px" }} (:name tenant)
               (dom/button #js {
                                :onClick (fn []
-                                          (connect-tennant own-chan "http://192.168.1.23:5000" "admin" "password" (:name @tenant)))
+                                          (connect-tennant own-chan url username password (:name @tenant)))
 
                                  :className "btn btn-primary btn-xs"} (:name tenant)))
 
