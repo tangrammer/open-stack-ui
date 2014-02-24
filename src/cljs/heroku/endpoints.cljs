@@ -84,7 +84,7 @@
                   :flavors (>! flow :flavors )
                   :create-server (>! flow (fn [app] (listen-component :next-chan owner
                                                    create-server/main-form app
-                                                   {:init-state { :flow (om/get-state owner :flow)}}  )) )
+                                                   {:init-state { :flow (om/get-state owner :flow)}})) )
                   (>! flow :service ))
                 (recur))))))
     om/IRenderState

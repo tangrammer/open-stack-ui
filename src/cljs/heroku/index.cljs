@@ -121,10 +121,31 @@
     (-> (wurivagnuc connection-type-channel :connection :connections)
         (wurivagnuc :tenant :tenant)
         (wurivagnuc {:endpoints mocks/eps :token-id "xxxxxxxx"} :next-chan)
-
         (wurivagnuc {:create-server mocks/create-server :model :create-server} :next-chan)
         (wurivagnuc [:server mocks/server-created]  :next-chan)
         (close!)))
+
+
+
+  "once you have in memmory all these data ....."
+  (let [real-eps (:endpoints @app-state)
+        real-token (:token-id @app-state)
+        flavors (:flavors @app-state)
+        images (:images @app-state)
+        networks (:networks @app-state)
+        create-server {:create-server {:images images :flavors flavors :networks networks }  :model :create-server}
+        ]
+   (go
+     (>! content-chan :welcome)
+     (-> (wurivagnuc connection-type-channel :connection :connections)
+         (wurivagnuc :tenant :tenant)
+         (wurivagnuc {:endpoints real-eps :token-id real-token} :next-chan)
+         (wurivagnuc create-server :next-chan)
+         (close!)
+         )))
+
+
+
   (go
     (>! content-chan :welcome)
     (-> (wurivagnuc connection-type-channel :connection :connections)
@@ -142,22 +163,6 @@
         (close!)
         ))
 
-  "once you have in memmory all these data ....."
-  (let [real-eps (:endpoints @app-state)
-        real-token (:token-id @app-state)
-        flavors (:flavors @app-state)
-        images (:images @app-state)
-        networks (:networks @app-state)
-        create-server {:create-server (:create-server @app-state) :model :create-server}
-        ]
-   (go
-     (>! content-chan :welcome)
-     (-> (t connection-type-channel :connection :connections)
-         (t :tenant :tenant)
-         (t {:endpoints real-eps :token-id real-token} :next)
-         (t create-server :next)
-         (close!)
-         )))
 
   (go
     (>! content-chan :welcome)
