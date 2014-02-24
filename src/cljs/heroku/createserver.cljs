@@ -1,6 +1,7 @@
 (ns heroku.createserver
 
-  (:require-macros [cljs.core.async.macros :refer [go]])
+  (:require-macros [cljs.core.async.macros :refer [go]]
+                   [heroku.mac :refer [t minimal alert wurivagnuc listen-component]])
   (:require
    [heroku.login :as login]
    [heroku.util :as util]
@@ -73,13 +74,17 @@
   (reify
     om/IInitState
     (init-state [_]
-      {:own-chan (chan)})
+      (util/init-continuations-channels
+       { :own-chan (chan)}
+       :next-chan ))
 
     om/IWillMount
     (will-mount [this]
+      (util/publish-mount-state owner :own-chan )
       (let [connection (om/get-state owner :own-chan)]
         (go (loop []
               (let [[k v] (<! connection)]
+                (println "PPPPPPPPPPPPPPPPPPPPPPPP")
                 (if (= k :server)
                   (do
                     (om/update! app k v)

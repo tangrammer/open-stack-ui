@@ -1,6 +1,6 @@
 (ns heroku.index
   (:require-macros [cljs.core.async.macros :refer [go]]
-                   [heroku.mac :refer [t minimal]])
+                   [heroku.mac :refer [t minimal alert wurivagnuc listen-component]])
   (:require
    [heroku.mocks :as mocks]
    [heroku.util :as util]
@@ -32,28 +32,21 @@
     om/IInitState
     (init-state [_]
       (println (str "init content component" ))
-      {:flow  content-chan
-       :stock :welcome
-       :nexts {:connections (chan (sliding-buffer 1))
-               :eps (chan (sliding-buffer 1))
-               :create-server (chan (sliding-buffer 1))
-               :tenants (chan (sliding-buffer 1))
-               :services (chan (sliding-buffer 1))
-               :images (chan (sliding-buffer 1))
-               :flavors (chan (sliding-buffer 1))}
-       })
+      (util/init-continuations-channels
+       {:flow content-chan :stock :welcome }
+       :connections :eps :create-server :tenants :services :images :flavors)
+      )
     om/IWillMount
     (will-mount [_]
-      (om/set-state! owner  :flow (util/publish
-                                   (om/get-state owner  :in-chan)
-                                   (om/get-state owner :flow)
-                                   (om/get-state owner :nexts)))
+      (util/publish-mount-state owner :flow )
+
+
       (println "content component published")
 
       (let [flow  (om/get-state owner :flow)]
         (go (loop []
               (let [flow-state   (<! flow)]
-;                (println (str "content type::: " flow-state))
+                                        ;                (println (str "content type::: " flow-state))
                 (om/update! app :flow-state flow-state)
                 (om/set-state! owner :stock flow-state)
                 (recur))))))
@@ -67,28 +60,33 @@
                  (if (keyword? flow-state)
                    (condp = flow-state
                      :welcome (dom/h2 nil (str "Welcome!! " (:flow-state app)))
-                     :connection (om/build conns/connections app
+                     :connection (listen-component :connections owner
+                                                   conns/connections app
+                                                   {:init-state { :flow (om/get-state owner :flow)}}  )
+                     #_(om/build conns/connections app
                                            {:init-state {:in-chan (:connections (om/get-state owner :nexts)) :flow (om/get-state owner :flow)}} )
 
                      :endpoints (om/build eps/epss app {:state {:in-chan (:eps (om/get-state owner :nexts)) :flow (om/get-state owner :flow)}} )
                                         ;changed to use function                     :tenants (om/build tenants/tenants app {:state {:in-chan (om/get-state owner :next-chan-tenants) :flow (om/get-state owner :flow)}} )
                      :images (om/build imgs/images app {:state {:in-chan (:images(om/get-state owner :nexts)) :flow (om/get-state owner :flow)}} )
                      :flavors (om/build flavs/flavors app {:state {:in-chan (:flavors (om/get-state owner :nexts)) :flow (om/get-state owner :flow)}} )
-                     :create-server (om/build create-server/main-form app {:state {:in-chan (:create-server (om/get-state owner :nexts))
-                                                                                   :flow (om/get-state owner :flow)}} )
+                     :create-server
+                     (listen-component :create-server owner
+                                                   create-server/main-form app
+                                                   {:init-state { :flow (om/get-state owner :flow)}}  )
+
+
                      :server-created (do
-                                                            (dom/div nil
-                                                                     (dom/h2 nil "server created ok!")
-
-
-                                                                     (dom/pre nil (dom/code nil (JSON/stringify (clj->js (:server  app)) nil 2)))))
+                                       (dom/div nil
+                                                (dom/h2 nil "server created ok!")
+                                                (dom/pre nil (dom/code nil (JSON/stringify (clj->js (:server  app)) nil 2)))))
                      :service (do
-                                                            (dom/div #js {:id "service" :style #js {  :width "100%" }}
-                                                                     (dom/h2 nil (str "service call!: " (:model app)))
+                                (dom/div #js {:id "service" :style #js {  :width "100%" }}
+                                         (dom/h2 nil (str "service call!: " (:model app)))
 
-                                                                     (dom/button #js {:className "btn  btn-primary " :type "button"
-                                                                                      :onClick #(put! (om/get-state owner :flow)  :endpoints )} "endpoints again!")
-                                                                     (dom/pre nil (dom/code nil (JSON/stringify (clj->js ((:model app) app)) nil 2)))))
+                                         (dom/button #js {:className "btn  btn-primary " :type "button"
+                                                          :onClick #(put! (om/get-state owner :flow)  :endpoints )} "endpoints again!")
+                                         (dom/pre nil (dom/code nil (JSON/stringify (clj->js ((:model app) app)) nil 2)))))
                      (js/alert (str  "else" flow-state))
                      )
                                         ;(js/alert "ofu")
@@ -114,17 +112,25 @@
 (println "\n\n\n\n\n\n\n\n\n")
 ;;;;;;;;;;;;;;;;; TESTING ;;;;;;;;;;;;;;
 (def connection-type-channel shared-chan)
+
 (comment
 
+  (go (>! content-chan :welcome))
   (go
     (>! content-chan :welcome)
-    (-> (t connection-type-channel :connection :connections)
-        (t :tenant :tenant)
-        (t {:endpoints mocks/eps :token-id "xxxxxxxx"} :next)
+    (-> (wurivagnuc connection-type-channel :connection :connections)
+        (wurivagnuc :tenant :tenant)
+        (wurivagnuc {:endpoints mocks/eps :token-id "xxxxxxxx"} :next-chan)
 
-      (close!)
-
-        ))
+        (wurivagnuc {:create-server mocks/create-server :model :create-server} :next-chan)
+        (wurivagnuc [:server mocks/server-created]  :next-chan)
+        (close!)))
+  (go
+    (>! content-chan :welcome)
+    (-> (wurivagnuc connection-type-channel :connection :connections)
+        (wurivagnuc :base :base)
+        (wurivagnuc {:token-id "xxxxxxxx" :tenants mocks/tenants} :next)
+        (close!)))
 
 
   (go
@@ -143,7 +149,6 @@
         images (:images @app-state)
         networks (:networks @app-state)
         create-server {:create-server (:create-server @app-state) :model :create-server}
-
         ]
    (go
      (>! content-chan :welcome)
@@ -152,10 +157,7 @@
          (t {:endpoints real-eps :token-id real-token} :next)
          (t create-server :next)
          (close!)
-
          )))
-
-
 
   (go
     (>! content-chan :welcome)

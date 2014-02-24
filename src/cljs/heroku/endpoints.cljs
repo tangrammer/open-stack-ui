@@ -1,6 +1,8 @@
 (ns heroku.endpoints
-  (:require-macros [cljs.core.async.macros :refer [go]])
+(:require-macros [cljs.core.async.macros :refer [go]]
+                   [heroku.mac :refer [t minimal alert wurivagnuc listen-component]])
   (:require
+   [heroku.createserver :as create-server]
    [heroku.util :as util]
    [heroku.nav :as nav]
    [ajax.core :refer [GET POST]]
@@ -60,27 +62,29 @@
   (reify
     om/IInitState
     (init-state [_]
-      {:own-chan (chan)
-
-       :next-chan (chan (sliding-buffer 1))})
+      (util/init-continuations-channels
+       { :own-chan (chan)}
+       :next-chan ))
 
     om/IWillMount
     (will-mount [_]
 
-
+      (util/publish-mount-state owner :own-chan )
 
 
       (let [try-to-call (om/get-state owner :own-chan)
             flow (om/get-state owner :flow)]
         (go (loop []
-              (>! (om/get-state owner :in-chan) [(om/get-state owner :own-chan) {:next (om/get-state owner :next-chan)}])
+;              (>! (om/get-state owner :in-chan) [(om/get-state owner :own-chan) {:next (om/get-state owner :next-chan)}])
               (let [data-readed (<! try-to-call)]
                 (om/update! app :model (:model data-readed))
                 (om/update! app (:model data-readed) ((:model data-readed) data-readed))
                 (condp = (:model data-readed)
                   :images (>! flow :images )
                   :flavors (>! flow :flavors )
-                  :create-server (>! flow :create-server )
+                  :create-server (>! flow (fn [app] (listen-component :next-chan owner
+                                                   create-server/main-form app
+                                                   {:init-state { :flow (om/get-state owner :flow)}}  )) )
                   (>! flow :service ))
                 (recur))))))
     om/IRenderState

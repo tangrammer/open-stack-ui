@@ -1,5 +1,6 @@
 (ns heroku.connections
-  (:require-macros [cljs.core.async.macros :refer [go]])
+  (:require-macros [cljs.core.async.macros :refer [go]]
+                   [heroku.mac :refer [t minimal alert wurivagnuc listen-component]])
   (:require
    [heroku.login :as login]
    [heroku.util :as util]
@@ -119,19 +120,23 @@
     om/IInitState
     (init-state [_]
       (println "init tenant component")
-      {
-       :own-chan (chan)
-       :next-chan (chan (sliding-buffer 1)) })
+
+      (util/init-continuations-channels
+       { :own-chan (chan)}
+       :next-chan )
+      )
     om/IWillMount
     (will-mount [_]
+      (util/publish-mount-state owner :own-chan )
       (go (loop []
-            (>! (om/get-state owner :in-chan) [(om/get-state owner :own-chan) {:next (om/get-state owner :next-chan)}])
+;            (>! (om/get-state owner :in-chan) [(om/get-state owner :own-chan) {:next (om/get-state owner :next-chan)}])
             (println "component 'tenant' published")
             (let [data-readed (<! (om/get-state owner :own-chan))]
               (om/update! data :token-id (:token-id data-readed))
               (om/update! data :endpoints (:endpoints data-readed))
               (>! (om/get-state owner :flow)
-                  (fn [app] (om/build eps/epss app {:init-state {:in-chan (om/get-state owner :next-chan) :flow (om/get-state owner :flow)}} )))
+                  (fn [app]
+                    (listen-component :next-chan owner eps/epss app {:init-state { :flow (om/get-state owner :flow)}})))
 
               (recur))))
       )
@@ -170,21 +175,23 @@
     om/IInitState
     (init-state [_]
       (println "init connections component")
-      {
-       :own-chan (chan)
-       :connection-type :base
-       :next-chan-base (chan (sliding-buffer 1))
-       :next-chan-tenant (chan (sliding-buffer 1))})
+      (util/init-continuations-channels
+       { :own-chan (chan)
+       :connection-type :base}
+       :base :tenant )
+)
 
     om/IWillMount
     (will-mount [this]
       (println "will mount connections")
-
-                                        ;(om/set-state! owner :connection  (om/get-state owner :in-chan))
+      (println (om/get-state owner :in-chan))
+      (util/publish-mount-state owner :own-chan )
+      ;(om/set-state! owner :connection  (om/get-state owner :in-chan))
       (let [connection (om/get-state owner :own-chan)]
         (go (loop []
-(>! (om/get-state owner :in-chan) [(om/get-state owner :own-chan) {:base  (om/get-state owner :next-chan-base) :tenant (om/get-state owner :next-chan-tenant)}])
-              (println "published connections component")
+
+
+              (println "published connections component***************")
               (let [connection-type (<! connection)]
 
                 (println (str "getting connection-type" connection-type))
@@ -206,8 +213,9 @@
                  (dom/h3 nil (str "CONNECTION AREA" connection-type))
                  (om/build nav/navbar app {:init-state {:connection (om/get-state owner :own-chan)}} )
                  (if (= connection-type :base)
-                   (om/build base app {:init-state {:in-chan (om/get-state owner :next-chan-base) :flow (:flow state)}} )
-                   (om/build tenant app {:init-state {:in-chan (om/get-state owner :next-chan-tenant):flow (:flow state)  }
+                   (listen-component :base owner base app {:init-state { :flow (om/get-state owner :flow)}}  )
+                   (listen-component :tenant owner tenant app {:init-state { :flow (om/get-state owner :flow)}}  )
+                   #_(om/build tenant app {:init-state {:in-chan (:next-chan-tenant (om/get-state owner :nexts)) :flow (:flow state)  }
                                          } )
                    )
                  ))

@@ -7,10 +7,42 @@
    [cljs.core.async :refer [put! chan <! >! sliding-buffer dropping-buffer close!]])
     )
 
+
+
+(defn init-continuations-channels [state & keys]
+  (merge state {:nexts  (reduce #(conj % [%2 (chan (sliding-buffer 1))]) {} keys)})
+  )
+(defn check-map [m out]
+  (if-let [is (:init-state m)]
+    (assoc-in m [:init-state :in-chan]  out)
+    (assoc m  :init-state { :in-chan out})
+    )
+  )
+
 (defn get-value [owner ref]
   (let [input (om/get-node owner ref)]
     (.-value input)
     ))
+
+
+(defn publish-mount-state [owner  own-key]
+  (let [suscriber (om/get-state owner :in-chan)
+        own (om/get-state owner own-key)
+        nexts (om/get-state owner :nexts )]
+    (let [cont (chan)]
+      (go
+        (loop []
+          (>! suscriber [own nexts])
+          (if-let [in-own-value (<! own)]
+            (do
+;              (println (str in-own-value "->>>>>>>>>> value recieved"))
+              (>! cont in-own-value)
+              (recur))
+            (close! cont))))
+      (om/set-state! owner own-key cont)
+      )))
+
+
 (defn publish [suscriber own nexts ]
 ;  (println (str "suscriber****************** " nexts))
   (let [cont (chan)]

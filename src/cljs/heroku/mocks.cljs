@@ -35,6 +35,28 @@
   [{:host_routes [], :enable_dhcp false, :ip_version 4, :name "public-subnet", :dns_nameservers [], :gateway_ip "172.24.4.1", :tenant_id "542461de33ee417aae7358f204764f47", :allocation_pools [{:start "172.24.4.2", :end "172.24.4.254"}], :network_id "dafc72f2-1395-4913-a376-d512801447db", :cidr "172.24.4.0/24", :id "52c536a1-6bee-4b87-892c-14871423335d"} {:host_routes [], :enable_dhcp true, :ip_version 4, :name "private-subnet", :dns_nameservers [], :gateway_ip "10.0.0.1", :tenant_id "2a4e13a9da1e43b0bf3cb16b3e0e2aeb", :allocation_pools [{:start "10.0.0.2", :end "10.0.0.254"}], :network_id "f9661eaa-39ee-4ddb-8693-05efd1a92136", :cidr "10.0.0.0/24", :id "d45a6bbe-fd3d-450b-a96f-3e13a4d27048"}])
 
 
+(def server-created
+  {
+  :security_groups [
+    {
+      :name "default"
+    }
+  ]
+  "OS-DCF:diskConfig" "MANUAL"
+  :id "ca7da24f-98a2-4de5-9a66-e94cc4ed5c1f"
+  :links [
+    {
+      :href "http://8.21.28.222:8774/v2/da05a30dff7746b9a20027a68cfe6076/servers/ca7da24f-98a2-4de5-9a66-e94cc4ed5c1f"
+      :rel "self"
+    }
+    {
+      :href "http://8.21.28.222:8774/da05a30dff7746b9a20027a68cfe6076/servers/ca7da24f-98a2-4de5-9a66-e94cc4ed5c1f"
+      :rel "bookmark"
+    }
+  ]
+   :adminPass "a5hzY25UHoS5"
+})
+
 
 (def create-server
   {:flavors flavors :networks networks :images images }
