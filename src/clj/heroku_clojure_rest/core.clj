@@ -65,11 +65,11 @@
 (comment "process create-server"
 (def username "admin")
 (def password "password")
-(def url "http://192.168.1.16:5000")
+(def url "http://208.124.249.142:5000")
 
-(def eps-res (endpoints url username password username))
-(def eps (structured-endpoints eps-res))
-(def token-id (get-in eps-res [:access :token :id]))
+(def eps-res (endpoints-adaptated {:url url :username username :password password :tenant-name username}))
+(def eps (:eps eps-res))
+(def token-id (:token-id eps-res))
 (def nova-url (:publicURL (:compute eps)))
 (def quantum-url (:publicURL (:network eps)))
 (def images (service-call token-id nova-url :images))
